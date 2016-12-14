@@ -66,13 +66,12 @@ def upload_file():
             return redirect(request.url)
     return '''
         <!doctype html>
-            <title>Upload new File</title>
-                <h1>Upload new File</h1>
-                    <form action="" method=post enctype=multipart/form-data>
-                          <p><input type=file name=file>
-                                   <input type=submit value=Upload>
-                                       </form>
-                                           '''
+        <title>Upload new File</title>
+        <h1>Upload new File</h1>
+        <form action="" method=post enctype=multipart/form-data>
+            <p><input type=file name=file>
+            <input type=submit value=Upload>
+        </form>'''
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=80, debug=True)
