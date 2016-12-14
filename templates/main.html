@@ -39,23 +39,28 @@
                         </div>
                   </div>
             </nav>
-            {% for pin in pins %}
-                  <h2>{{ pins[pin].name }}
-                  {% if pins[pin].state == true %}
-                  is currently <strong>on</strong></h2>
-                  <div class="row">
-                        <div class="col-md-2">
-                        <a href="/{{pin}}/off" class="btn btn-block btn-lg btn-default" role="button">Turn off</a>
-                        </div>
-                  </div>
-                  {% else %}
-                  is currently <strong>off</strong></h2>
-                  <div class="row">
-                        <div class="col-md-2">
-                        <a href="/{{pin}}/on" class="btn btn-block btn-lg btn-primary" role="button">Turn on</a>
-                        </div>
-                  </div>
-            {% endif %}
-            {% endfor %}
+            <table class="table">
+                  <thead>
+                        <tr>
+                              <th>Pin Number</th>
+                              <th>Status</th>
+                              <th>Control</th>
+                        </tr>
+                  </thead>
+                  <tbody>
+                  {% for pin in pins %}
+                  <tr>
+                        <td>{{ pins[pin].name }}</td>
+                        {% if pins[pin].state == true %}
+                              <td><strong>on</strong></td>
+                              <td><a href="/{{pin}}/off" class="btn btn-block btn-lg btn-default" role="button">Turn off</a></td>
+                        {% else %}
+                              <td><strong>off</strong></td>
+                              <td><a href="/{{pin}}/on" class="btn btn-block btn-lg btn-primary" role="button">Turn on</a></td>
+                        {% endif %}
+                  </tr>
+                  {% endfor %}
+                  </tbody>
+            </table>
       </body>
 </html>
