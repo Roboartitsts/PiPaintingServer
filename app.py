@@ -87,7 +87,7 @@ def action(changePin, action):
 
 @app.route("/steppers")
 def steppers():
-    return render_template('stepper.html', **templateData)
+    return render_template('stepper.html')
 
 def allowed_file(filename):
     return '.' in filename and \
