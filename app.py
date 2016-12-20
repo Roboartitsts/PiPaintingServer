@@ -2,6 +2,7 @@ import os
 import RPi.GPIO as GPIO
 from flask import Flask, render_template, request, redirect, url_for
 from werkzeug.utils import secure_filename
+from stepper import Direction, Stepper
 
 GPIO.setmode(GPIO.BCM)
 
@@ -21,6 +22,17 @@ pins = {
     20 : {'name' : 'GPIO 20', 'state' : GPIO.LOW},
     21 : {'name' : 'GPIO 21', 'state' : GPIO.LOW}
     }
+
+steppers = {
+    1 : Stepper(2,3,4,14),
+    2 : Stepper(2,3,4,14),
+    3 : Stepper(2,3,4,14),
+    4 : Stepper(2,3,4,14),
+    5 : Stepper(2,3,4,14),
+    6 : Stepper(2,3,4,14),
+    7 : Stepper(2,3,4,14),
+    8 : Stepper(2,3,4,14)
+}
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -44,7 +56,7 @@ def pincontrol():
         }
     # Pass the template data into the template
     # main.html and return it to the    +++user
-    return render_template('main.html', **templateData)
+    return render_template('pins.html', **templateData)
 
 @app.route("/<changePin>/<action>")
 def action(changePin, action):
@@ -71,7 +83,7 @@ def action(changePin, action):
       'pins' : pins
    }
 
-   return render_template('main.html', **templateData)
+   return render_template('pins.html', **templateData)
 
 def allowed_file(filename):
     return '.' in filename and \
