@@ -42,9 +42,9 @@ class Stepper:
         GPIO.output(coil_B_1_pin, w3)
         GPIO.output(coil_B_2_pin, w4)
 
-    def run(delay, steps, direction)
-        if direction == Direction.Forward
+    def run(delay, steps, direction):
+        if direction == Direction.Forward:
             forward(int(delay) / 1000.0, int(steps))
-        else
+        else:
             backwards(int(delay) / 1000.0, int(steps))
-
+        
