@@ -85,6 +85,10 @@ def action(changePin, action):
 
    return render_template('pins.html', **templateData)
 
+@app.route("/steppers")
+def pincontrol():
+    return render_template('stepper.html', **templateData)
+
 def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.',1)[1] in ALLOWED_EXTENSIONS
