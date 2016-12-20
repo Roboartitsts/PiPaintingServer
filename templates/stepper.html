@@ -1,5 +1,55 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
+<h1 class="h1">Control Steppers</h1>
+<form class="form-horizontal"> 
+    <fieldset>
+        <div class="form-group">
+            <label for="stepper" class="col-lg-2 control-label">Stepper</label>
+            <div class="col-lg-10">
+                <select class="form-control" id="stepper">
+                    <option>Paint 1</option>
+                    <option>Paint 2</option>
+                    <option>Paint 3</option>
+                    <option>Paint 4</option>
+                    <option>Paint 5</option>
+                    <option>Paint 6</option>
+                    <option>Paint 7</option>
+                    <option>Paint 8</option>
+                    <option>Palette Rotator</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="stepNum" class="col-lg-2 control-label">Number of Steps</label>
+            <div class="col-lg-10">
+                <input type="text" class="form-control" id="stepNum" placeholder="Number of Steps">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="delayNum" class="col-lg-2 control-label">Time Delay (use a value greater than 10)</label>
+            <div class="col-lg-10">
+                <input type="number" class="form-control" id="delayNum" placeholder="Time Delay">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label">Stepper Direction</label>
+            <div class="col-lg-10">
+                <div class="radio">
+                <label>
+                    <input type="radio" name="directionRadios" id="directionRadios1" value="forward" checked="">
+                    Forward
+                </label>
+                </div>
+                <div class="radio">
+                <label>
+                    <input type="radio" name="directionRadios" id="directionRadios2" value="backward">
+                    Backward
+                </label>
+                </div>
+            </div>
+        </div>
+        <button type="button" name="RunStepper" value="Run Stepper">Run Stepper</button>
+    </fieldset>
+</form>
 {% endblock %}
