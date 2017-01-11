@@ -3,48 +3,102 @@ import sys
 from enum import Enum
 import RPi.GPIO as GPIO
 
+
 class Direction(Enum):
     forward = 1
     backward = 1
 
+
+def setStep(stepper, w1, w2, w3, w4):
+    GPIO.output(stepper.coil_A_1_pin, w1)
+    GPIO.output(stepper.coil_A_2_pin, w2)
+    GPIO.output(stepper.coil_B_1_pin, w3)
+    GPIO.output(stepper.coil_B_2_pin, w4)
+
+
+def forward(stepper, delay, steps):
+    for i in range(0, steps):
+        setStep(stepper, 1, 0, 1, 0)
+        time.sleep(delay)
+        setStep(stepper, 0, 1, 1, 0)
+        time.sleep(delay)
+        setStep(stepper, 0, 1, 0, 1)
+        time.sleep(delay)
+        setStep(stepper, 1, 0, 0, 1)
+        time.sleep(delay)
+
+
+def backwards(stepper, delay, steps):
+    for i in range(0, steps):
+        setStep(stepper, 1, 0, 0, 1)
+        time.sleep(delay)
+        setStep(stepper, 0, 1, 0, 1)
+        time.sleep(delay)
+        setStep(stepper, 0, 1, 1, 0)
+        time.sleep(delay)
+        setStep(stepper, 1, 0, 1, 0)
+        time.sleep(delay)
+
+
+def set_control(control_val):
+    if control_val == 7:
+        GPIO.output(16, 1)
+        GPIO.output(20, 1)
+        GPIO.output(21, 1)
+    elif control_val == 6:
+        GPIO.output(16, 1)
+        GPIO.output(20, 1)
+        GPIO.output(21, 0)
+    elif control_val == 5:
+        GPIO.output(16, 1)
+        GPIO.output(20, 0)
+        GPIO.output(21, 1)
+    elif control_val == 4:
+        GPIO.output(16, 1)
+        GPIO.output(20, 0)
+        GPIO.output(21, 0)
+    elif control_val == 3:
+        GPIO.output(16, 0)
+        GPIO.output(20, 1)
+        GPIO.output(21, 1)
+    elif control_val == 2:
+        GPIO.output(16, 0)
+        GPIO.output(20, 1)
+        GPIO.output(21, 0)
+    elif control_val == 1:
+        GPIO.output(16, 0)
+        GPIO.output(20, 0)
+        GPIO.output(21, 1)
+    elif control_val == 0:
+        GPIO.output(16, 0)
+        GPIO.output(20, 0)
+        GPIO.output(21, 0)
+    else:
+        GPIO.output(16, 0)
+        GPIO.output(20, 0)
+        GPIO.output(21, 0)
+
+
 class Stepper:
-    def __init__(self, power_a, ground_a, power_b, ground_b):
-        self.coil_A_1_pin = power_a
-        self.coil_A_2_pin = ground_a
-        self.coil_B_1_pin = power_b
-        self.coil_B_2_pin = ground_b
+    """control a stepper motor given control values"""
+    coil_A_1_pin = 2
+    coil_A_2_pin = 3
+    coil_B_1_pin = 4
+    coil_B_2_pin = 14
 
-    def forward(delay, steps):  
-        for i in range(0, steps):
-            setStep(1, 0, 1, 0)
-            time.sleep(delay)
-            setStep(0, 1, 1, 0)
-            time.sleep(delay)
-            setStep(0, 1, 0, 1)
-            time.sleep(delay)
-            setStep(1, 0, 0, 1)
-            time.sleep(delay)
+    def __init__(self, control_val):
+        self.control_val = control_val
 
-    def backwards(delay, steps):  
-        for i in range(0, steps):
-            setStep(1, 0, 0, 1)
-            time.sleep(delay)
-            setStep(0, 1, 0, 1)
-            time.sleep(delay)
-            setStep(0, 1, 1, 0)
-            time.sleep(delay)
-            setStep(1, 0, 1, 0)
-            time.sleep(delay)
-            
-    def setStep(w1, w2, w3, w4):
-        GPIO.output(coil_A_1_pin, w1)
-        GPIO.output(coil_A_2_pin, w2)
-        GPIO.output(coil_B_1_pin, w3)
-        GPIO.output(coil_B_2_pin, w4)
+    def run(self, delay, steps, direction):
+        """runs the Stepper
 
-    def run(delay, steps, direction):
-        if direction == Direction.Forward:
-            forward(int(delay) / 1000.0, int(steps))
+        Keyword arguments:
+        delay -- the time between steps, min value is 50
+        steps -- the number of steps to travel
+        direction -- the direction for the stepper to travel
+        """
+        set_control(self.control_val)
+        if direction == Direction.forward:
+            forward(self, int(delay) / 1000.0, int(steps))
         else:
-            backwards(int(delay) / 1000.0, int(steps))
-        
+            backwards(self, int(delay) / 1000.0, int(steps))
