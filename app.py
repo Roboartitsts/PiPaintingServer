@@ -11,7 +11,7 @@ GPIO.setmode(GPIO.BCM)
 UPLOAD_FOLDER = '/path/to/the/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
-pins = {
+pin_list = {
     2: {'name': 'GPIO 2', 'state': GPIO.LOW},
     3: {'name': 'GPIO 3', 'state': GPIO.LOW},
     4: {'name': 'GPIO 4', 'state': GPIO.LOW},
@@ -26,22 +26,22 @@ pins = {
     26: {'name': 'GPIO 26', 'state': GPIO.LOW}
 }
 
-steppers = {
-    1: Stepper(2, 3, 4, 14, 0),
-    2: Stepper(2, 3, 4, 14, 1),
-    3: Stepper(2, 3, 4, 14, 2),
-    4: Stepper(2, 3, 4, 14, 3),
-    5: Stepper(2, 3, 4, 14, 4),
-    6: Stepper(2, 3, 4, 14, 5),
-    7: Stepper(2, 3, 4, 14, 6),
-    8: Stepper(2, 3, 4, 14, 7),
-    9: Stepper(16, 20, 21, 26, -1)
+stepper_list = {
+    1: Stepper(0),
+    2: Stepper(1),
+    3: Stepper(2),
+    4: Stepper(3),
+    5: Stepper(4),
+    6: Stepper(5),
+    7: Stepper(6),
+    8: Stepper(7),
+    9: Stepper(-1)
 }
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Set each pin as an output and make it low:
-for pin in pins:
+for pin in pin_list:
     GPIO.setup(pin, GPIO.OUT)
     GPIO.output(pin, GPIO.LOW)
 
@@ -54,11 +54,11 @@ def main():
 @app.route("/pincontrol")
 def pin_control():
     # For each pin, read the pin state and store it in the pins dictionary:
-    for pin in pins:
-        pins[pin]['state'] = GPIO.input(pin)
+    for pin in pin_list:
+        pin_list[pin]['state'] = GPIO.input(pin)
     # Put the pin dictionary into the template data dictionary:
     templateData = {
-        'pins': pins
+        'pins': pin_list
     }
     # Pass the template data into the template
     # main.html and return it to the    +++user
@@ -70,7 +70,7 @@ def action(change_pin, action):
     # Convert the pin from the URL into an integer:
     change_pin = int(change_pin)
     # Get the device name for the pin being changed:
-    deviceName = pins[change_pin]['name']
+    deviceName = pin_list[change_pin]['name']
     # If the action part of the URL is "on," execute the code indented below:
     if action == "on":
         # Set the pin high:
@@ -82,12 +82,12 @@ def action(change_pin, action):
         message = "Turned " + deviceName + " off."
 
     # For each pin, read the pin state and store it in the pins dictionary:
-    for pin in pins:
-        pins[pin]['state'] = GPIO.input(pin)
+    for pin in pin_list:
+        pin_list[pin]['state'] = GPIO.input(pin)
 
     # Along with the pin dictionary, put the message into the template data dictionary:
     templateData = {
-        'pins': pins
+        'pins': pin_list
     }
 
     return render_template('pins.html', **templateData)

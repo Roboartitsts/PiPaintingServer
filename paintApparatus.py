@@ -3,6 +3,7 @@ import time
 import sys
 from enum import Enum
 from stepper import Stepper
+from stepper import Direction
 
 pins = {
     2: {'name': 'GPIO 2', 'state': GPIO.LOW},
@@ -18,15 +19,29 @@ pins = {
     21: {'name': 'GPIO 21', 'state': GPIO.LOW},
     26: {'name': 'GPIO 26', 'state': GPIO.LOW}
 }
-
+"""
+0 : pallete
+1 : Cyan
+2 : Magenta
+3 : Yellow
+4 : Black
+5 : White
+"""
 steppers = {
-    Pallete : Stepper(0),
-    Cyan : Stepper(1),
-    Magenta : Stepper(2),
-    Yellow : Stepper(3),
-    Black : Stepper(4),
-    White : Stepper(5)
+    0 : Stepper(0),
+    1 : Stepper(1), 
+    2 : Stepper(2),
+    3 : Stepper(3),
+    4 : Stepper(4),
+    5 : Stepper(5)
 }
+
+class Color(Enum):
+    Cyan = 1
+    Magenta = 2
+    Yellow = 3
+    Black = 4
+    White = 5
 
 def add(color, position, volume):
     # move pallate to color position
@@ -34,6 +49,21 @@ def add(color, position, volume):
 
 def dispense(color, volume):
     # dispense a volume of the paint
+    if color == Color.Cyan:
+        steppers[1].run(50, volume, Direction.forward)
+    elif color == Color.Magenta:
+        steppers[2].run(50, volume, Direction.forward)
+    elif color == Color.Yellow:
+        steppers[3].run(50, volume, Direction.forward)
+    elif color == Color.Black:
+        steppers[4].run(50, volume, Direction.forward)
+    elif color == Color.White:
+        steppers[5].run(50, volume, Direction.forward)
+
+def mix(seconds):
+    # lower the mixer into the cup
+    # mix for the given number of seconds
+    # raise the mixer out of the cup
 
 
 class PaintApparatus:
