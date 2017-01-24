@@ -3,6 +3,7 @@ import sys
 from enum import Enum
 import RPi.GPIO as GPIO
 
+GPIO.setmode(GPIO.BCM)
 pin_list = {
     2: {'name': 'GPIO 2', 'state': GPIO.LOW},
     3: {'name': 'GPIO 3', 'state': GPIO.LOW},
@@ -17,6 +18,10 @@ pin_list = {
     21: {'name': 'GPIO 21', 'state': GPIO.LOW},
     26: {'name': 'GPIO 26', 'state': GPIO.LOW}
 }
+
+for pin in pin_list:
+    GPIO.setup(pin, GPIO.OUT)
+    GPIO.output(pin, GPIO.LOW)
 
 class Direction(Enum):
     forward = 1
@@ -96,9 +101,9 @@ def set_control(control_val):
 class Stepper:
     """control a stepper motor given control values"""
     coil_A_1_pin = 2
-    coil_A_2_pin = 3
-    coil_B_1_pin = 4
-    coil_B_2_pin = 14
+    coil_A_2_pin = 27
+    coil_B_1_pin = 22
+    coil_B_2_pin = 17
 
     def __init__(self, control_val):
         self.control_val = control_val
