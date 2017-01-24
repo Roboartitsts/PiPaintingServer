@@ -118,6 +118,8 @@ class Stepper:
         """
         set_control(self.control_val)
         if direction == Direction.forward:
+            print('going forward')
             forward(self, int(delay) / 1000.0, int(steps))
         else:
+            print('going backward')
             backwards(self, int(delay) / 1000.0, int(steps))
