@@ -96,9 +96,9 @@ def set_control(control_val):
 class Stepper:
     """control a stepper motor given control values"""
     coil_A_1_pin = 2
-    coil_A_2_pin = 27
-    coil_B_1_pin = 22
-    coil_B_2_pin = 17
+    coil_A_2_pin = 3
+    coil_B_1_pin = 4
+    coil_B_2_pin = 14
 
     def __init__(self, control_val):
         self.control_val = control_val
