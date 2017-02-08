@@ -15,7 +15,7 @@ from stepper import Stepper
 
 GPIO.setmode(GPIO.BCM)
 
-UPLOAD_FOLDER = '/path/to/the/uploads'
+UPLOAD_FOLDER = '/static/img/'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 pin_list = {
