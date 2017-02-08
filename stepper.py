@@ -28,7 +28,7 @@ for pin in pin_list:
 
 class Direction(Enum):
     forward = 1
-    backward = 1
+    backward = 2 
 
 
 def setStep(stepper, w1, w2, w3, w4):
