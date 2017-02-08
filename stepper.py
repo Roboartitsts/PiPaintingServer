@@ -20,6 +20,7 @@ pin_list = {
     17: {'name': 'GPIO 17', 'state': GPIO.LOW},
     27: {'name': 'GPIO 27', 'state': GPIO.LOW},
     22: {'name': 'GPIO 22', 'state': GPIO.LOW}
+
 }
 
 for pin in pin_list:

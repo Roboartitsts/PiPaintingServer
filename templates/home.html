@@ -1,11 +1,21 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="alert alert-warning alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <strong>Server Status</strong> {{status}}
+</div>
 <img src="./static/img/gen_image.png" alt="Generated Image"/>
 <img src="./static/img/decomposed_image.png" alt="DecomposedImage"/>
-<form>
+<form method="POST" action="Generate">
+    <input type="text" name="image" data-autocomplete="{{'[' + ','.join(genlist) + ']'}}"
     <button type="button" name="generate" value="Generate Image">Generate Image</button>
     <button type="button" name="decompose" value="Decompose Image">Decompose
-Image</button>
+    Image</button>
+</form>
+<h1>Upload new File</h1>
+<form action="" method=post enctype=multipart/form-data>
+    <p><input type=file name=file>
+    <input type=submit value=Upload>
 </form>
 {% endblock %}

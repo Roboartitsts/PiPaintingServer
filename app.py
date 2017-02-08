@@ -1,9 +1,16 @@
-import os
-
 import RPi.GPIO as GPIO
 from flask import Flask, render_template, request, redirect
 from werkzeug.utils import secure_filename
-
+from genlist import classes
+import os, sys, time
+import signal
+import urllib
+import urllib.request
+import urllib.error
+import socket
+import requests
+from PIL import Image
+from io import BytesIO
 from stepper import Stepper
 
 GPIO.setmode(GPIO.BCM)
@@ -48,7 +55,9 @@ for pin in pin_list:
 
 @app.route("/")
 def main():
-    return render_template('home.html')
+    url = "http://overmind.rose-hulman.edu:1700/generator"
+    response = requests.request("GET", url)
+    return render_template('home.html', status=response.text, genlist = classes)
 
 
 @app.route("/pincontrol")
@@ -104,11 +113,7 @@ def control_steppers():
     steps = request.form['stepNum']
     delay = request.form['delayNum']
     option = request.form['directionRadios']
-
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+    stepper_list[stepper].run(delay, steps, option)
 
 
 @app.route('/fileupload', methods=['GET', 'POST'])
@@ -125,15 +130,30 @@ def upload_file():
             filename = secure_filename(file.filename)
             file.sae(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return redirect(request.url)
-    return '''
-        <!doctype html>
-        <title>Upload new File</title>
-        <h1>Upload new File</h1>
-        <form action="" method=post enctype=multipart/form-data>
-            <p><input type=file name=file>
-            <input type=submit value=Upload>
-        </form>'''
+    url = "http://overmind.rose-hulman.edu:1700/generator"
+    response = requests.request("GET", url)
+    return render_template('home.html', status=response.text, genlist=classes)
 
+@app.route('/generate', method=['POST'])
+def get_generated_image():
+    imageindex = request.form['image']
+    body = "{\"imageindex\":\"" + imageindex +"\"}"
+    url = "http://overmind.rose-hulman.edu:1700/generator"
+    response = requests.request("PUT", url, data=body)
+
+	# Retreive generated file
+    body = "{\"imageindex\":\"" + imageindex +"\"}"
+    filename = "static/img/gen_image.png"
+    url = "http://overmind.rose-hulman.edu:1700/generated/" + filename
+    response = requests.request("GET", url, data=body)
+
+    i = Image.open(BytesIO(response.content))
+    i.save(filename)
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=80, debug=True)

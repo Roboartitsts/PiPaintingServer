@@ -29,7 +29,7 @@ pins = {
 """
 steppers = {
     0 : Stepper(0),
-    1 : Stepper(1), 
+    1 : Stepper(1),
     2 : Stepper(2),
     3 : Stepper(3),
     4 : Stepper(4),
@@ -62,10 +62,16 @@ def dispense(color, volume):
 
 def mix(seconds):
     # lower the mixer into the cup
+    time.sleep(60000)
     # mix for the given number of seconds
     # raise the mixer out of the cup
 
 
+
 class PaintApparatus:
-    
+    next_cup_steps = 8
+    ten_ml_steps = 325
+
+    def __init__(self):
+        self.next_cup_steps = 8
     
