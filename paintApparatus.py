@@ -22,7 +22,6 @@ pins = {
     21: {'name': 'GPIO 21', 'state': GPIO.LOW},
     26: {'name': 'GPIO 26', 'state': GPIO.LOW}
 }
-<<<<<<< HEAD
 """
 0 : pallete
 1 : Cyan
@@ -39,8 +38,6 @@ steppers = {
     4 : Stepper(4),
     5 : Stepper(5)
 }
-=======
->>>>>>> eef399741bf6f13d58ad2decc1a86d034e72a5cc
 
 class Color(Enum):
     Cyan = 1
@@ -58,14 +55,6 @@ def mix(seconds):
 
 
 class PaintApparatus:
-<<<<<<< HEAD
-    next_cup_steps = 8
-    ten_ml_steps = 325
-
-    def __init__(self):
-        self.next_cup_steps = 8
-    
-=======
         
     def __init__(self):
         """
@@ -167,6 +156,3 @@ if __name__ == "__main__":
                 dataToWrite.extend(result)
                 csvwriter.writerow(dataToWrite)
     return
-    
-        
->>>>>>> eef399741bf6f13d58ad2decc1a86d034e72a5cc
