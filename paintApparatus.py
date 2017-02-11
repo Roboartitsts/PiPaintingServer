@@ -14,6 +14,9 @@ pins = {
     4: {'name': 'GPIO 4', 'state': GPIO.LOW},
     5: {'name': 'GPIO 5', 'state': GPIO.LOW},
     6: {'name': 'GPIO 6', 'state': GPIO.LOW},
+    9: {'name': 'GPIO 9', 'state': GPIO.LOW},
+    10: {'name': 'GPIO 10', 'state': GPIO.LOW},
+    11: {'name': 'GPIO 11', 'state': GPIO.LOW},
     13: {'name': 'GPIO 13', 'state': GPIO.LOW},
     14: {'name': 'GPIO 14', 'state': GPIO.LOW},
     16: {'name': 'GPIO 16', 'state': GPIO.LOW},
@@ -47,11 +50,19 @@ class Color(Enum):
     White = 5
 
 def mix(seconds):
+    GPIO.output(10, GPIO.HIGH)
+    time.sleep(13000)
+    GPIO.output(10, GPIO.LOW)
     # lower the mixer into the cup
+    GPIO.output(11, GPIO.HIGH)
     time.sleep(60000)
+    GPIO.output(11, GPIO.LOW)
     # mix for the given number of seconds
     # raise the mixer out of the cup
-    pass
+    GPIO.output(9, GPIO.HIGH)
+    time.sleep(13000)
+    GPIO.output(9, GPIO.LOW)
+    
 
 
 class PaintApparatus:
@@ -139,6 +150,9 @@ class PaintApparatus:
 
 
 if __name__ == "__main__":
+    for pin in pin_list:
+        GPIO.setup(pin, GPIO.OUT)
+        GPIO.output(pin, GPIO.LOW)
     print "Initiating Data collection on a color cube, generating 125 colors"
     datafile = open('colorcube.csv')
     csvwriter = csv.writer(datafile)
