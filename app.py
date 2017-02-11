@@ -4,9 +4,7 @@ from werkzeug.utils import secure_filename
 from genlist import classes
 import os, sys, time
 import signal
-import urllib
-import urllib.request
-import urllib.error
+import urllib2
 import socket
 import requests
 from PIL import Image
@@ -56,7 +54,7 @@ for pin in pin_list:
 @app.route("/")
 def main():
     url = "http://overmind.rose-hulman.edu:1700/generator"
-    response = requests.request("GET", url)
+    response = urllib2.Request("GET", url)
     return render_template('home.html', status=response.text, genlist = classes)
 
 
@@ -131,7 +129,7 @@ def upload_file():
             file.sae(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return redirect(request.url)
     url = "http://overmind.rose-hulman.edu:1700/generator"
-    response = requests.request("GET", url)
+    response = urllib2.Request("GET", url)
     return render_template('home.html', status=response.text, genlist=classes)
 
 @app.route('/generate', method=['POST'])
@@ -139,13 +137,13 @@ def get_generated_image():
     imageindex = request.form['image']
     body = "{\"imageindex\":\"" + imageindex +"\"}"
     url = "http://overmind.rose-hulman.edu:1700/generator"
-    response = requests.request("PUT", url, data=body)
+    response = urllib2,Request("PUT", url, data=body)
 
 	# Retreive generated file
     body = "{\"imageindex\":\"" + imageindex +"\"}"
     filename = "static/img/gen_image.png"
     url = "http://overmind.rose-hulman.edu:1700/generated/" + filename
-    response = requests.request("GET", url, data=body)
+    response = urllib2.Request("GET", url, data=body)
 
     i = Image.open(BytesIO(response.content))
     i.save(filename)
