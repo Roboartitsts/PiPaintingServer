@@ -55,7 +55,7 @@ def mix(seconds):
     GPIO.output(10, GPIO.LOW)
     # lower the mixer into the cup
     GPIO.output(11, GPIO.HIGH)
-    time.sleep(60000)
+    time.sleep(15000)
     GPIO.output(11, GPIO.LOW)
     # mix for the given number of seconds
     # raise the mixer out of the cup
