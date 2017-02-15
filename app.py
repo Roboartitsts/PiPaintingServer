@@ -55,7 +55,7 @@ for pin in pin_list:
 def main():
     url = "http://overmind.rose-hulman.edu:1700/generator"
     response = urllib2.Request("GET", url)
-    return render_template('home.html', status=response.text, genlist = classes)
+    return render_template('home.html',  genlist = classes)
 
 
 @app.route("/pincontrol")
@@ -132,7 +132,7 @@ def upload_file():
     response = urllib2.Request("GET", url)
     return render_template('home.html', status=response.text, genlist=classes)
 
-@app.route('/generate', method=['POST'])
+@app.route('/generate', methods=['POST'])
 def get_generated_image():
     imageindex = request.form['image']
     body = "{\"imageindex\":\"" + imageindex +"\"}"
