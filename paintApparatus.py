@@ -62,6 +62,16 @@ def mix(seconds):
     GPIO.output(9, GPIO.HIGH)
     time.sleep(13000)
     GPIO.output(9, GPIO.LOW)
+
+def brush_cleaner(seconds):
+    GPIO.output(3, GPIO.HIGH)
+    time.sleep(seconds*1000)
+    GPIO.output(3, GPIO.LOW)
+
+def brush_dryer(seconds):
+    GPIO.output(4, GPIO.HIGH)
+    time.sleep(seconds*1000)
+    GPIO.output(4, GPIO.LOW)
     
 
 
