@@ -1,20 +1,17 @@
-import RPi.GPIO as GPIO
 from flask import Flask, render_template, request, redirect
 from werkzeug.utils import secure_filename
 from genlist import classes
 import os, sys, time
 import signal
-import urllib2
+import requests
 import socket
 import requests
 from PIL import Image
 from io import BytesIO
 from stepper import Stepper
+import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)
-
-UPLOAD_FOLDER = '/static/img/'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 pin_list = {
     2: {'name': 'GPIO 2', 'state': GPIO.LOW},
@@ -31,31 +28,23 @@ pin_list = {
     26: {'name': 'GPIO 26', 'state': GPIO.LOW}
 }
 
-stepper_list = {
-    1: Stepper(0),
-    2: Stepper(1),
-    3: Stepper(2),
-    4: Stepper(3),
-    5: Stepper(4),
-    6: Stepper(5),
-    7: Stepper(6),
-    8: Stepper(7),
-    9: Stepper(-1)
-}
-app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
 # Set each pin as an output and make it low:
 for pin in pin_list:
     GPIO.setup(pin, GPIO.OUT)
     GPIO.output(pin, GPIO.LOW)
 
+UPLOAD_FOLDER = '/static/img/'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 
 @app.route("/")
 def main():
     url = "http://overmind.rose-hulman.edu:1700/generator"
-    response = urllib2.Request("GET", url)
-    return render_template('home.html',  genlist = classes)
+    response = server_status()
+    return render_template('home.html', status=response, genlist = classes)
 
 
 @app.route("/pincontrol")
@@ -129,29 +118,34 @@ def upload_file():
             file.sae(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return redirect(request.url)
     url = "http://overmind.rose-hulman.edu:1700/generator"
-    response = urllib2.Request("GET", url)
-    return render_template('home.html', status=response.text, genlist=classes)
+    response = server_status()
+    return render_template('home.html', status=response, genlist=classes)
 
 @app.route('/generate', methods=['POST'])
 def get_generated_image():
     imageindex = request.form['image']
     body = "{\"imageindex\":\"" + imageindex +"\"}"
     url = "http://overmind.rose-hulman.edu:1700/generator"
-    response = urllib2,Request("PUT", url, data=body)
+    response = requests.put(url, data=body)
 
 	# Retreive generated file
-    body = "{\"imageindex\":\"" + imageindex +"\"}"
-    filename = "static/img/gen_image.png"
-    url = "http://overmind.rose-hulman.edu:1700/generated/" + filename
-    response = urllib2.Request("GET", url, data=body)
+    filename = "{0:0>4}.png".format(imageindex)
+    url = "http://overmind.rose-hulman.edu:1700/generator" + filename
+    response = requests.get(url)
 
     i = Image.open(BytesIO(response.content))
     i.save(filename)
+    return render_template("home.html", status=response, genlist=classes)
 
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+def server_status():
+    url = "http://overmind.rose-hulman.edu:1700/generator"
+    response = requests.get(url)
+    return response.text
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=80, debug=True)
