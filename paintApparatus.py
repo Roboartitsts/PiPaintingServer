@@ -50,20 +50,7 @@ class Color(Enum):
     Black = 4
     White = 5
 
-def mix(seconds):
-    GPIO.output(10, GPIO.HIGH)
-    time.sleep(13000)
-    GPIO.output(10, GPIO.LOW)
-    # lower the mixer into the cup
-    GPIO.output(11, GPIO.HIGH)
-    time.sleep(15000)
-    GPIO.output(11, GPIO.LOW)
-    # mix for the given number of seconds
-    # raise the mixer out of the cup
-    GPIO.output(9, GPIO.HIGH)
-    time.sleep(13000)
-    GPIO.output(9, GPIO.LOW)
-    
+
 
 
 class PaintApparatus:
@@ -100,6 +87,8 @@ class PaintApparatus:
         self.maxPalettePosition = 19*self.stepsPerCup
 
         self.activeCup = 0
+
+
     
     def paletteGoTo(self, position):
         ''' moves the palette to the specified position in steps '''
@@ -134,6 +123,21 @@ class PaintApparatus:
         self.paletteGoTo(position)
         print(position)
         self.dispense(color, volume)
+
+    def mix(seconds):
+        GPIO.output(10, GPIO.HIGH)
+        time.sleep(13000)
+        GPIO.output(10, GPIO.LOW)
+        # lower the mixer into the cup
+        GPIO.output(11, GPIO.HIGH)
+        time.sleep(15000)
+        GPIO.output(11, GPIO.LOW)
+        # mix for the given number of seconds
+        # raise the mixer out of the cup
+        GPIO.output(9, GPIO.HIGH)
+        time.sleep(13000)
+        GPIO.output(9, GPIO.LOW)
+    
         
 
     def mixColor(self,targetColor):
