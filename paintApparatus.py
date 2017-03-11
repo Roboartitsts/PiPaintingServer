@@ -1,4 +1,4 @@
- RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import time
 import sys
 import numpy as np
@@ -7,6 +7,7 @@ from stepper import Stepper
 from stepper import Direction
 import colorExtractor
 import csv
+import time
 
 pins = {
     2: {'name': 'GPIO 2', 'state': GPIO.LOW},
@@ -86,16 +87,16 @@ class PaintApparatus:
         }
 
         self.positionOffsets = {
-        1:0
-        2:20
-        3:38
-        4:56
-        5:72
+        1:0,
+        2:126,
+        3:126*2,
+        4:126*3,
+        5:126*4,
         'c':-8 # Todo: see if it should be 300-8 or something else
         }
 
-        self.palettePositon = 0
-        self.stepsPerCup = 8
+        self.palettePosition = 0
+        self.stepsPerCup = 63
         self.maxPalettePosition = 19*self.stepsPerCup
 
         self.activeCup = 0
@@ -108,7 +109,8 @@ class PaintApparatus:
             dir = Direction.backward
             
         self.steppers[0].run(15, dist, dir)
-        
+        self.palettePosition = position
+
     def getCameraColor(self):
         img = colorExtractor.captureImg()
         avgColor = colorExtractor.getMeanColor(img)
@@ -129,8 +131,10 @@ class PaintApparatus:
 
     def add(self, color, position, volume):
         # move pallate to color position
+        self.paletteGoTo(position)
+        print(position)
+        self.dispense(color, volume)
         
-        dispense(color, volume)
 
     def mixColor(self,targetColor):
         ''' 
@@ -139,9 +143,10 @@ class PaintApparatus:
          move to camera to verify color
          target color is in the form [C M Y B W] '''
         
-        for index in length(targetColor):
-            self.add(color, self.activeCup*self.stepsPerCup + self.offsets[index], targetColor[index])
-
+        for index in range(len(targetColor)):
+	    print(targetColor[index])
+            self.add(index, self.activeCup*self.stepsPerCup + self.positionOffsets[index+1], targetColor[index])
+            time.sleep(5)
 
 
     def changeActiveCup(self, num):
@@ -169,4 +174,3 @@ if __name__ == "__main__":
                 dataToWrite = [c,m,y,0,0]
                 dataToWrite.extend(result)
                 csvwriter.writerow(dataToWrite)
-    return
