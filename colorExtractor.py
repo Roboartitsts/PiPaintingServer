@@ -12,7 +12,7 @@ import pygame.camera
 pygame.init()
 pygame.camera.init()
 
-screen = pygame.display.set_mode((640,480),0)
+#screen = pygame.display.set_mode((640,480),0)
 
 cam_list = pygame.camera.list_cameras()
 webcam = pygame.camera.Camera(cam_list[0], (640, 480))

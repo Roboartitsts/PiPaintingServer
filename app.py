@@ -121,7 +121,7 @@ def upload_file():
     response = server_status()
     return render_template('home.html', status=response, genlist=classes)
 
-@app.route('/generate', method=['POST'])
+@app.route('/generate', methods=['POST'])
 def get_generated_image():
     imageindex = request.form['image']
     body = "{\"imageindex\":\"" + imageindex +"\"}"
