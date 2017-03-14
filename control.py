@@ -2,8 +2,22 @@ import * from paintApparatus
 import * from abb 
 import json
 
+class Color:
+    def __init__(self, rgb):
+        self.red = rgb[0]
+        self.green = rgb[1]
+        self.blue = rgb[2]
+
+    def __str__(self):
+        return str(self.__dict__)
+
+    def __ne__(self, other): 
+        return self.__dict__ != other.__dict__
+
 class Control(object):
     def __init__(self, serial_connection, apparatus):
+        self.last_brush = 0
+        self.last_color = Color([0,0,0])
         self.serial_connection = serial_connection
         self.apparatus = apparatus
 
@@ -11,4 +25,26 @@ class Control(object):
         with open(path_to_instructions) as instructions:
             for instruction in json.load(instructions):
                 self.instructions.append(instructions)
-    
+    def single_step(self, step):
+        stroke_color = Color(step[6:8])
+        if step[9] != self.last_brush:
+            switch_brush(step[9])
+        if stroke_color != self.last_color:
+            clean_brush()
+            switch_or_create_color(stroke_color)
+        self.serial_connection.sendCoordQ(step[0], step[1], step[2], step[3], step[4], step[5], step[6])
+
+    def switch_brush(self, brush):
+        self.serial_connection.switch_brush(brush)
+
+    def clean_brush(self):
+        self.serial_connection.move_to_cleaner()
+        self.apparatus.brush_cleaner(2)
+        self.serial_connection.move_to_dryer()
+        self.apparatus.brush_dryer(2)
+        self.serial_connection.moveToSafe()
+
+    def switch_or_create_color(self, color):
+        self.apparatus.create_or_activate(color)
+        self.serial_connection.getPaint(0)
+            

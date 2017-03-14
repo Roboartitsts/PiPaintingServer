@@ -50,32 +50,6 @@ class Color(Enum):
     Black = 4
     White = 5
 
-def mix(seconds):
-    GPIO.output(10, GPIO.HIGH)
-    time.sleep(13000)
-    GPIO.output(10, GPIO.LOW)
-    # lower the mixer into the cup
-    GPIO.output(11, GPIO.HIGH)
-    time.sleep(15000)
-    GPIO.output(11, GPIO.LOW)
-    # mix for the given number of seconds
-    # raise the mixer out of the cup
-    GPIO.output(9, GPIO.HIGH)
-    time.sleep(13000)
-    GPIO.output(9, GPIO.LOW)
-
-def brush_cleaner(seconds):
-    GPIO.output(3, GPIO.HIGH)
-    time.sleep(seconds*1000)
-    GPIO.output(3, GPIO.LOW)
-
-def brush_dryer(seconds):
-    GPIO.output(4, GPIO.HIGH)
-    time.sleep(seconds*1000)
-    GPIO.output(4, GPIO.LOW)
-    
-
-
 class PaintApparatus:
         
     def __init__(self):
@@ -160,8 +134,6 @@ class PaintApparatus:
         GPIO.output(9, GPIO.HIGH)
         time.sleep(13000)
         GPIO.output(9, GPIO.LOW)
-    
-        
 
     def mixColor(self,targetColor):
         ''' 
@@ -171,13 +143,24 @@ class PaintApparatus:
          target color is in the form [C M Y B W] '''
         
         for index in range(len(targetColor)):
-	    print(targetColor[index])
+            print(targetColor[index])
             self.add(index, self.activeCup*self.stepsPerCup + self.positionOffsets[index+1], targetColor[index])
             time.sleep(5)
 
 
     def changeActiveCup(self, num):
         self.activeCup = num
+
+    def brush_cleaner(seconds):
+        GPIO.output(3, GPIO.HIGH)
+        time.sleep(seconds*1000)
+        GPIO.output(3, GPIO.LOW)
+
+    def brush_dryer(seconds):
+        GPIO.output(4, GPIO.HIGH)
+        time.sleep(seconds*1000)
+        GPIO.output(4, GPIO.LOW)
+            
 
 
 
