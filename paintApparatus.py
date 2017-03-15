@@ -27,8 +27,8 @@ class Color(Enum):
 
 class PaintApparatus:
     pin_list = {
-        3: {'name': 'GPIO 3', 'state': GPIO.LOW},
-        4: {'name': 'GPIO 4', 'state': GPIO.LOW},
+        23: {'name': 'GPIO 3', 'state': GPIO.LOW},
+        24: {'name': 'GPIO 4', 'state': GPIO.LOW},
         5: {'name': 'GPIO 5', 'state': GPIO.LOW},
         6: {'name': 'GPIO 6', 'state': GPIO.LOW},
         9: {'name': 'GPIO 9', 'state': GPIO.LOW},
@@ -137,7 +137,7 @@ class PaintApparatus:
     def brush_cleaner(self, seconds):
         GPIO.output(24, GPIO.HIGH)
         time.sleep(seconds*1000)
-        GPIO.output(24 GPIO.LOW)
+        GPIO.output(24, GPIO.LOW)
 
     def brush_dryer(self, seconds):
         GPIO.output(23, GPIO.HIGH)
