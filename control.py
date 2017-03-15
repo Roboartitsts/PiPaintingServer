@@ -1,5 +1,5 @@
-import * from paintApparatus
-import * from abb 
+# import * from paintApparatus
+# import * from abb 
 import json
 
 class Color:
@@ -20,31 +20,41 @@ class Control(object):
         self.last_color = Color([0,0,0])
         self.serial_connection = serial_connection
         self.apparatus = apparatus
+        self.instructions = []
 
     def load_instructions(self, path_to_instructions):
+        print('Loading instructions located at {0}'.format(path_to_instructions))
         with open(path_to_instructions) as instructions:
             for instruction in json.load(instructions):
                 self.instructions.append(instructions)
-    def single_step(self, step):
-        stroke_color = Color(step[6:8])
-        if step[9] != self.last_brush:
-            switch_brush(step[9])
-        if stroke_color != self.last_color:
-            clean_brush()
-            switch_or_create_color(stroke_color)
-        self.serial_connection.sendCoordQ(step[0], step[1], step[2], step[3], step[4], step[5], step[6])
 
     def switch_brush(self, brush):
-        self.serial_connection.switch_brush(brush)
+        print('Switching to brush {0}'.format(brush))
+        # self.serial_connection.switch_brush(brush)
 
     def clean_brush(self):
-        self.serial_connection.move_to_cleaner()
-        self.apparatus.brush_cleaner(2)
-        self.serial_connection.move_to_dryer()
-        self.apparatus.brush_dryer(2)
-        self.serial_connection.moveToSafe()
+        print('cleaning brush')
+        # self.serial_connection.move_to_cleaner()
+        # self.apparatus.brush_cleaner(2)
+        # self.serial_connection.move_to_dryer()
+        # self.apparatus.brush_dryer(2)
+        # self.serial_connection.moveToSafe()
 
     def switch_or_create_color(self, color):
-        self.apparatus.create_or_activate(color)
-        self.serial_connection.getPaint(0)
-            
+        print('creating color R:{r}, G:{g}, B:{b}'.format(r = color.red, b = color.blue, g = color.green))
+        # self.apparatus.create_or_activate(color)
+        # self.serial_connection.getPaint(0)
+
+    def single_step(self, step):
+        print(step)
+        stroke_color = Color(step[6:8])
+        if step[9] != self.last_brush:
+            self.switch_brush(step[9])
+        if stroke_color != self.last_color:
+            self.clean_brush()
+            self.switch_or_create_color(stroke_color)
+        # self.serial_connection.sendCoordQ(step[0], step[1], step[2], step[3], step[4], step[5], step[6])
+
+    def run(self):
+        for step in self.instructions:
+            self.single_step(step)
