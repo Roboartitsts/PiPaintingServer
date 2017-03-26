@@ -5,6 +5,7 @@ import numpy as np
 from enum import Enum
 from stepper import Stepper
 from stepper import Direction
+from color import ColorRGB
 import colorExtractor
 import csv
 import time
@@ -69,7 +70,7 @@ class PaintApparatus:
         self.palettePosition = 0
         self.stepsPerCup = 63
         self.maxPalettePosition = 19*self.stepsPerCup
-
+        self.palette_colors = []
         self.active_cup = 0
 
     def paletteGoTo(self, position):
@@ -121,15 +122,17 @@ class PaintApparatus:
 
     def mix_color(self, target_color):
         '''
-         move to each dispenser and dispense sequentially
-         move to mixer to mix
-         move to camera to verify color
-         target color is in the form [C M Y B W] '''
-        for index in range(len(target_color)):
-            print(target_color[index])
+            move to each dispenser and dispense sequentially
+            move to mixer to mix
+            move to camera to verify color
+            target color is a ColorRGB object '''
+        cmyk_colors = target_color.getCMYK()
+        for index in range(len(cmyk_colors)):
+            print(cmyk_colors[index])
             position = self.activeCup * self.stepsPerCup + self.position_offsets[index + 1]
-            self.add(index, position, target_color[index])
+            self.add(index, position, cmyk_colors[index])
             time.sleep(5)
+        self.palette_colors.append(target_color)
 
     def changeActiveCup(self, num):
         self.activeCup = num

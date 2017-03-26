@@ -54,7 +54,7 @@ class ABBRunner():
             msg = "GRIPV" + str(toSqueeze)+ ";"
         return self.sendSerial(msg)
 
-    def getPaint(self, cup = 0):
+    def getPaint(self, cup=0):
         if not self.connected:
             return False
 
@@ -66,10 +66,37 @@ class ABBRunner():
             return False
         return self.sendSerial("MOVETOSAFE;")
 
+
     def moveUpsideDown(self,):
         if not self.connected:
             return False
         return self.sendSerial("MOVEUPS;")
+
+    def moveApproachClean(self,):
+        if not self.connected:
+            return False
+        return self.sendSerial("MOVEACLEAN;")
+
+    def moveOverClean(self,):
+        if not self.connected:
+            return False
+        return self.sendSerial("MOVEOCLEAN;")
+
+    def moveClean(self,):
+        if not self.connected:
+            return False
+        return self.sendSerial("MOVECLEAN;")
+
+    def moveOverDry(self,):
+        if not self.connected:
+            return False
+        return self.sendSerial("MOVEODRY;")
+
+    def moveDry(self,):
+        if not self.connected:
+            return False
+        return self.sendSerial("MOVEDRY;")
+
 
     def next(self):
         if not self.connected:
