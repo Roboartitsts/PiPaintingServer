@@ -3,7 +3,7 @@ import time
 import sys
 import numpy as np
 from enum import Enum
-from stepper import Stepper
+from stepper import Stepper, StepperBasic
 from stepper import Direction
 import colorExtractor
 import csv
@@ -88,7 +88,7 @@ class PaintApparatus:
 
         self.activeCup = 0
 
-
+        self.mixerStepper = StepperBasic(12,6,13,19)
     
     def paletteGoTo(self, position):
         ''' moves the palette to the specified position in steps '''
@@ -124,19 +124,22 @@ class PaintApparatus:
         print(position)
         self.dispense(color, volume)
 
-    def mix(seconds):
+    def mix(self, seconds):
         GPIO.output(10, GPIO.HIGH)
-        time.sleep(13000)
+        time.sleep(13)
         GPIO.output(10, GPIO.LOW)
         # lower the mixer into the cup
         GPIO.output(11, GPIO.HIGH)
-        time.sleep(15000)
+        time.sleep(15)
         GPIO.output(11, GPIO.LOW)
         # mix for the given number of seconds
         # raise the mixer out of the cup
         GPIO.output(9, GPIO.HIGH)
-        time.sleep(13000)
+        time.sleep(13)
         GPIO.output(9, GPIO.LOW)
+
+    def cleanMixer(self):
+	self.mixerStepper.run(15, 80, 1)
     
         
 
