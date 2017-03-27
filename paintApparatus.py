@@ -110,11 +110,7 @@ class PaintApparatus:
         print(position)
         self.dispense(color, volume)
 
-<<<<<<< HEAD
-    def mix(self, seconds):
-=======
     def mix(self):
->>>>>>> 2c762fb9ead626cad2a9c98c2f31a2ce93a58427
         GPIO.output(10, GPIO.HIGH)
         time.sleep(13)
         GPIO.output(10, GPIO.LOW)
@@ -127,27 +123,11 @@ class PaintApparatus:
         GPIO.output(9, GPIO.HIGH)
         time.sleep(13)
         GPIO.output(9, GPIO.LOW)
-<<<<<<< HEAD
 
     def cleanMixer(self):
 	self.mixerStepper.run(15, 80, 1)
     
         
-
-    def mixColor(self,targetColor):
-        ''' 
-         move to each dispenser and dispense sequentially
-         move to mixer to mix
-         move to camera to verify color
-         target color is in the form [C M Y B W] '''
-        
-        for index in range(len(targetColor)):
-	    print(targetColor[index])
-            self.add(index, self.activeCup*self.stepsPerCup + self.positionOffsets[index+1], targetColor[index])
-            time.sleep(5)
-=======
->>>>>>> 2c762fb9ead626cad2a9c98c2f31a2ce93a58427
-
     def mix_color(self, target_color):
         '''
             move to each dispenser and dispense sequentially
