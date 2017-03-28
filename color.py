@@ -1,13 +1,13 @@
-class ColorRGB:
+class Color:
     def __init__(self):
-        self.red = 0
-        self.green = 0
-        self.blue = 0
-        self.cyan = 0
-        self.magenta = 0
-        self.yellow = 0
-        self.black = 0
-        self.white = 0
+        self.red = None
+        self.green = None
+        self.blue = None
+        self.cyan = None
+        self.magenta = None
+        self.yellow = None
+        self.black = None
+        self.white = None
 
     def setRGB(self, rgb):
         self.red = rgb[0]
@@ -20,6 +20,22 @@ class ColorRGB:
         self.yellow = cmyk[2]
         self.black = cmyk[3]
         self.white = cmyk[4]
+
+    def rgb2cmyk(self):
+        rp = self.red/255
+        gp = self.green/255
+        bp = self.blue/255
+        self.black = 1 - max([rp, gp, bp])
+        self.white = 1 - self.black
+        if self.black != 1:
+            self.cyan = (1 - rp - self.black) / (1 - self.black)
+            self.magenta = (1 - gp - self.black) / (1 - self.black)
+            self.yellow = (1 - bp - self.black) / (1 - self.black)
+
+    def cmyk2rgb(self):
+        self.red = 255 * (1 - self.cyan) * (1 - self.black)
+        self.green = 255 * (1 - self.magenta) * (1 - self.black)
+        self.blue = 255 * (1 - self.yellow) * (1 - self.black)
 
     def getRGB(self):
         return [self.red, self.green, self.blue]

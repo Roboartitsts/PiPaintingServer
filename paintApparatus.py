@@ -5,11 +5,10 @@ import numpy as np
 from enum import Enum
 from stepper import Stepper
 from stepper import Direction
-from color import ColorRGB
+from color import Color
 import colorExtractor
 import csv
 import time
-
 
 """
 0 : pallete
@@ -19,7 +18,7 @@ import time
 4 : Black
 5 : White
 """
-class Color(Enum):
+class CMYK(Enum):
     Cyan = 1
     Magenta = 2
     Yellow = 3
@@ -27,6 +26,8 @@ class Color(Enum):
     White = 5
 
 class PaintApparatus:
+    dispense_ml = 8
+    steps_ml = 28
     pin_list = {
         23: {'name': 'GPIO 3', 'state': GPIO.LOW},
         24: {'name': 'GPIO 4', 'state': GPIO.LOW},
@@ -70,7 +71,7 @@ class PaintApparatus:
         self.palettePosition = 0
         self.stepsPerCup = 63
         self.maxPalettePosition = 19*self.stepsPerCup
-        self.palette_colors = []
+        self.palette_colors = {}
         self.active_cup = 0
 
     def paletteGoTo(self, position):
@@ -89,19 +90,20 @@ class PaintApparatus:
 
     def dispense(self, color, volume):
         # dispense a volume of the paint
-        if color == Color.Cyan:
+        if color == CMYK.Cyan:
             self.steppers[1].run(50, volume, Direction.forward)
-        elif color == Color.Magenta:
+        elif color == CMYK.Magenta:
             self.steppers[2].run(50, volume, Direction.forward)
-        elif color == Color.Yellow:
+        elif color == CMYK.Yellow:
             self.steppers[3].run(50, volume, Direction.forward)
-        elif color == Color.Black:
+        elif color == CMYK.Black:
             self.steppers[4].run(50, volume, Direction.forward)
-        elif color == Color.White:
+        elif color == CMYK.White:
             self.steppers[5].run(50, volume, Direction.forward)
 
     def add(self, color, position, volume):
         # move pallate to color position
+        position = position * self.stepsPerCup + self.position_offsets[color]
         self.paletteGoTo(position)
         print(position)
         self.dispense(color, volume)
@@ -127,12 +129,14 @@ class PaintApparatus:
             move to camera to verify color
             target color is a ColorRGB object '''
         cmyk_colors = target_color.getCMYK()
+        tot = sum(cmyk_colors)
         for index in range(len(cmyk_colors)):
-            print(cmyk_colors[index])
-            position = self.activeCup * self.stepsPerCup + self.position_offsets[index + 1]
-            self.add(index, position, cmyk_colors[index])
+            toAdd = cmyk_colors[index]*self.dispense_ml/tot
+            print(toAdd)
+            position = self.activeCup
+            self.add(index, position, toAdd)
             time.sleep(5)
-        self.palette_colors.append(target_color)
+        self.palette_colors[target_color] = self.active_cup
 
     def changeActiveCup(self, num):
         self.activeCup = num
@@ -147,23 +151,34 @@ class PaintApparatus:
         time.sleep(seconds*1000)
         GPIO.output(23, GPIO.LOW)
 
+    def create_or_activate(self, color):
+        if color in self.palette_colors.keys():
+            self.paletteGoTo(self.palette_colors[color])
+            self.changeActiveCup(self.palette_colors[color])
+            return
+        self.changeActiveCup(max(self.palette_colors.values()) + 1)
+        self.mix_color(color)
+
 if __name__ == "__main__":
     print("Initiating Data collection on a color cube, generating 125 colors")
-    datafile = open('colorcube.csv')
-    csvwriter = csv.writer(datafile)
+    # datafile = open('colorcube.csv')
+    # csvwriter = csv.writer(datafile)
 
-    aparatus = PaintApparatus()
-    for pin in aparatus.pin_list:
+    apparatus = PaintApparatus()
+    for pin in apparatus.pin_list:
         GPIO.setup(pin, GPIO.OUT)
         GPIO.output(pin, GPIO.LOW)
-    cyan = np.linspace(100, 0, 5)
-    magenta = np.linspace(0, 100, 5)
-    yellow = np.linspace(0, 100, 5)
-    for c in cyan:
-        for m in magenta:
-            for y in yellow:
-                aparatus.mix_color([c, m, y, 0, 0])
-                result = aparatus.getCameraColor()
-                dataToWrite = [c, m, y, 0, 0]
-                dataToWrite.extend(result)
-                csvwriter.writerow(dataToWrite)
+    # cyan = np.linspace(100, 0, 5)
+    # magenta = np.linspace(0, 100, 5)
+    # yellow = np.linspace(0, 100, 5)
+    # for c in cyan:
+    #     for m in magenta:
+    #         for y in yellow:
+    #             color = Color()
+    #             color.setCMYK([c, m, y, 0, 0])
+    #             color.cmyk2rgb()
+    #             aparatus.mix_color(color)
+    #             result = aparatus.getCameraColor()
+    #             dataToWrite = [c, m, y, 0, 0]
+    #             dataToWrite.extend(result)
+    #             csvwriter.writerow(dataToWrite)
