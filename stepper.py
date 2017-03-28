@@ -6,6 +6,16 @@ import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 pin_list = {
     2: {'name': 'GPIO 2', 'state': GPIO.LOW},
+    3: {'name': 'GPIO 3', 'state': GPIO.LOW},
+    4: {'name': 'GPIO 4', 'state': GPIO.LOW},
+    5: {'name': 'GPIO 5', 'state': GPIO.LOW},
+    6: {'name': 'GPIO 6', 'state': GPIO.LOW},
+    9: {'name': 'GPIO 9', 'state': GPIO.LOW},
+    10: {'name': 'GPIO 10', 'state': GPIO.LOW},
+    11: {'name': 'GPIO 11', 'state': GPIO.LOW},
+    12: {'name': 'GPIO 12', 'state': GPIO.LOW},
+    13: {'name': 'GPIO 13', 'state': GPIO.LOW},
+    14: {'name': 'GPIO 14', 'state': GPIO.LOW},
     16: {'name': 'GPIO 16', 'state': GPIO.LOW},
     20: {'name': 'GPIO 20', 'state': GPIO.LOW},
     21: {'name': 'GPIO 21', 'state': GPIO.LOW},
@@ -120,3 +130,31 @@ class Stepper:
         else:
             print('going backward')
             backwards(self, int(delay) / 1000.0, int(steps))
+
+
+
+class StepperBasic:
+
+    def __init__(self, w1, w2, w3, w4):
+        self.coil_A_1_pin = w1
+        self.coil_A_2_pin = w2
+	self.coil_B_1_pin = w3
+	self.coil_B_2_pin = w4
+
+    def run(self, delay, steps, direction):
+        """runs the Stepper
+
+        Keyword arguments:
+        delay -- the time between steps, min value is 50
+        steps -- the number of steps to travel
+        direction -- the direction for the stepper to travel
+        """
+        
+        if direction == Direction.forward:
+            print('going forward')
+            forward(self, int(delay) / 1000.0, int(steps))
+        else:
+            print('going backward')
+            backwards(self, int(delay) / 1000.0, int(steps))
+
+
