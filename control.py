@@ -1,5 +1,5 @@
-# import * from paintApparatus
-# import * from abb 
+import * from paintApparatus
+import * from abb 
 import json
 from color import Color
 
@@ -56,3 +56,11 @@ class Control(object):
     def run(self):
         for step in self.instructions:
             self.single_step(step)
+if __name__ == '__main__':
+    abb = ABBRunner(2530, 2530)
+    abb.connnectToSerial('/dev/ttyUSB0')
+    apparatus = PaintApparatus()
+    ctrl = Control(abb, apparatus)
+    ctrl.load_instructions('test.json')
+    ctrl.run()
+
