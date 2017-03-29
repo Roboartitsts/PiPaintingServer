@@ -1,14 +1,10 @@
 import RPi.GPIO as GPIO
 import time
-import sys
-import numpy as np
 from enum import Enum
 from stepper import Stepper, StepperBasic
 from stepper import Direction
 from color import Color
 import colorExtractor
-import csv
-import time
 
 """
 0 : pallete

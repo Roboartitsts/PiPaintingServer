@@ -139,8 +139,8 @@ class StepperBasic:
     def __init__(self, w1, w2, w3, w4):
         self.coil_A_1_pin = w1
         self.coil_A_2_pin = w2
-	self.coil_B_1_pin = w3
-	self.coil_B_2_pin = w4
+        self.coil_B_1_pin = w3
+        self.coil_B_2_pin = w4
 
     def run(self, delay, steps, direction):
         """runs the Stepper
@@ -150,7 +150,7 @@ class StepperBasic:
         steps -- the number of steps to travel
         direction -- the direction for the stepper to travel
         """
-        
+
         if direction == Direction.forward:
             print('going forward')
             forward(self, int(delay) / 1000.0, int(steps))
