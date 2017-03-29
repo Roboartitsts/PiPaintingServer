@@ -101,15 +101,15 @@ class PaintApparatus:
         volume = volume * self.steps_ml
         print("dispensing {0} of color {1}".format(volume, color))
         if color == CMYK.Cyan:
-            self.steppers[1].run(5, volume, Direction.forward)
+            self.steppers[1].run(15, volume, Direction.forward)
         elif color == CMYK.Magenta:
-            self.steppers[2].run(5, volume, Direction.forward)
+            self.steppers[2].run(15, volume, Direction.forward)
         elif color == CMYK.Yellow:
-            self.steppers[3].run(5, volume, Direction.forward)
+            self.steppers[3].run(15, volume, Direction.forward)
         elif color == CMYK.Black:
-            self.steppers[4].run(5, volume, Direction.forward)
+            self.steppers[4].run(15, volume, Direction.forward)
         elif color == CMYK.White:
-            self.steppers[5].run(5, volume, Direction.forward)
+            self.steppers[5].run(15, volume, Direction.forward)
 
     def add(self, color, position, volume):
         # move pallate to color position
@@ -126,9 +126,9 @@ class PaintApparatus:
             target color is a ColorRGB object '''
         cmyk_colors = target_color.getCMYK()
         tot = sum(cmyk_colors)
+        print('Mixing paint: {}'.format(target_color.getCMYK()))
         for index in range(len(cmyk_colors)):
             toAdd = cmyk_colors[index]*self.dispense_ml/tot
-            print('Mixing paint: {}'.format(target_color.getCMYK()))
             position = self.activeCup
             self.add(index + 1, position, toAdd)
             time.sleep(5)
