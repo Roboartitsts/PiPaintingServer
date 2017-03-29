@@ -172,3 +172,13 @@ if __name__ == "__main__":
     test_color.setRGB([80, 0, 0])
     test_color.rgb2cmyk()
     paint_app.create_or_activate(test_color)
+
+    test_color1 = Color()
+    test_color1.setRGB([255, 255, 255])
+    test_color1.rgb2cmyk()
+    paint_app.create_or_activate(test_color1)
+
+    test_color2 = Color()
+    test_color2.setRGB([36, 69, 150])
+    test_color2.rgb2cmyk()
+    paint_app.create_or_activate(test_color2)
