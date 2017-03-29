@@ -77,6 +77,14 @@ class PaintApparatus:
         self.activeCup = 0
 
         self.mixerStepper = StepperBasic(12,6,13,19)
+        
+        # set up position switches for the mixer arm 
+         
+        for pin in [18, 26]:
+            GPIO.setup(pin, GPIO.IN)
+            #print("testing pin {}".format(pin))
+            val = GPIO.input(pin)
+            #print(pin, val)
     
     def paletteGoTo(self, position):
         ''' moves the palette to the specified position in steps '''
@@ -113,22 +121,40 @@ class PaintApparatus:
         self.dispense(color, volume)
 
     def mix(self):
-        GPIO.output(10, GPIO.HIGH)
-        time.sleep(13)
-        GPIO.output(10, GPIO.LOW)
+        self.moveMixerDown()
         # lower the mixer into the cup
         GPIO.output(11, GPIO.HIGH)
         time.sleep(15)
         GPIO.output(11, GPIO.LOW)
         # mix for the given number of seconds
         # raise the mixer out of the cup
+        self.moveMixerUp()
+
+
+    def moveMixerOverClean(self):
+        while not self.mixer_at_clean():
+            self.mixerStepper.run(15, 1, -1)
+
+    def moveMixerOverPaint(self):
+        while not self.mixer_at_paint(): 
+            self.mixerStepper.run(15, 1, 1)
+
+    def moveMixerDown(self):
+        GPIO.output(10, GPIO.HIGH)
+        time.sleep(13)
+        GPIO.output(10, GPIO.LOW)
+
+    def moveMixerUp(self):
         GPIO.output(9, GPIO.HIGH)
         time.sleep(13)
         GPIO.output(9, GPIO.LOW)
+ 
+    def mixer_at_paint(self):
+        ''' Switch for position is at 18'''
+        return GPIO.input(18)
 
-    def cleanMixer(self):
-	self.mixerStepper.run(15, 80, 1)
-    
+    def mixer_at_clean(self):
+        return GPIO.input(26)
         
     def mix_color(self, target_color):
         '''
