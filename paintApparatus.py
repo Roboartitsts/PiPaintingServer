@@ -101,15 +101,15 @@ class PaintApparatus:
         volume = volume * self.steps_ml
         print("dispensing {0} of color {1}".format(volume, color))
         if color == CMYK.Cyan:
-            self.steppers[1].run(50, volume, Direction.forward)
+            self.steppers[1].run(5, volume, Direction.forward)
         elif color == CMYK.Magenta:
-            self.steppers[2].run(50, volume, Direction.forward)
+            self.steppers[2].run(5, volume, Direction.forward)
         elif color == CMYK.Yellow:
-            self.steppers[3].run(50, volume, Direction.forward)
+            self.steppers[3].run(5, volume, Direction.forward)
         elif color == CMYK.Black:
-            self.steppers[4].run(50, volume, Direction.forward)
+            self.steppers[4].run(5, volume, Direction.forward)
         elif color == CMYK.White:
-            self.steppers[5].run(50, volume, Direction.forward)
+            self.steppers[5].run(5, volume, Direction.forward)
 
     def add(self, color, position, volume):
         # move pallate to color position
