@@ -1,5 +1,5 @@
-import * from paintApparatus
-import * from abb 
+from paintApparatus import *
+from abb import *
 import json
 from color import Color
 

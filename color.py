@@ -22,20 +22,20 @@ class Color:
         self.white = cmyk[4]
 
     def rgb2cmyk(self):
-        rp = self.red/255
-        gp = self.green/255
-        bp = self.blue/255
-        self.black = 1 - max([rp, gp, bp])
-        self.white = 1 - self.black
-        if self.black != 1:
-            self.cyan = (1 - rp - self.black) / (1 - self.black)
-            self.magenta = (1 - gp - self.black) / (1 - self.black)
-            self.yellow = (1 - bp - self.black) / (1 - self.black)
+        rp = self.red/255.0
+        gp = self.green/255.0
+        bp = self.blue/255.0
+        self.black = 1.0 - max([rp, gp, bp])
+        self.white = 1.0 - self.black
+        if self.black != 1.0:
+            self.cyan = (1.0 - rp - self.black) / (1.0 - self.black)
+            self.magenta = (1.0 - gp - self.black) / (1.0 - self.black)
+            self.yellow = (1.0 - bp - self.black) / (1.0 - self.black)
 
     def cmyk2rgb(self):
-        self.red = 255 * (1 - self.cyan) * (1 - self.black)
-        self.green = 255 * (1 - self.magenta) * (1 - self.black)
-        self.blue = 255 * (1 - self.yellow) * (1 - self.black)
+        self.red = 255.0 * (1 - self.cyan) * (1 - self.black)
+        self.green = 255.0 * (1 - self.magenta) * (1 - self.black)
+        self.blue = 255.0 * (1 - self.yellow) * (1 - self.black)
 
     def getRGB(self):
         return [self.red, self.green, self.blue]
