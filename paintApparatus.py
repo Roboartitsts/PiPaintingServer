@@ -15,11 +15,11 @@ import colorExtractor
 5 : White
 """
 class CMYK(Enum):
-    Cyan = 1
-    Magenta = 2
-    Yellow = 3
-    Black = 4
-    White = 5
+    Cyan = 0
+    Magenta = 1
+    Yellow = 2
+    Black = 3
+    White = 4
 
 class PaintApparatus:
     dispense_ml = 8
