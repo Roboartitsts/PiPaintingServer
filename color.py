@@ -53,5 +53,5 @@ class Color:
         return self.__dict__ != other.__dict__
 
     def __hash__(self):
-        return hash(tuple(self))
+        return hash(tuple(self.red, self.green, self.blue))
 
