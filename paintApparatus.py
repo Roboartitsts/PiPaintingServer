@@ -131,7 +131,7 @@ class PaintApparatus:
             toAdd = cmyk_colors[index]*self.dispense_ml/tot
             position = self.activeCup
             self.add(index + 1, position, toAdd)
-            time.sleep(5)
+            time.sleep(15)
         self.palette_colors[target_color] = self.active_cup
         self.paletteGoTo(self.active_cup * self.stepsPerCup + self.position_offsets['c'])
 
@@ -140,12 +140,12 @@ class PaintApparatus:
 
     def brush_cleaner(self, seconds):
         GPIO.output(24, GPIO.HIGH)
-        time.sleep(seconds*1000)
+        time.sleep(seconds)
         GPIO.output(24, GPIO.LOW)
 
     def brush_dryer(self, seconds):
         GPIO.output(23, GPIO.HIGH)
-        time.sleep(seconds*1000)
+        time.sleep(seconds)
         GPIO.output(23, GPIO.LOW)
 
     def create_or_activate(self, color):

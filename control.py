@@ -10,6 +10,7 @@ class Control(object):
         self.serial_connection = serial_connection
         self.apparatus = apparatus
         self.instructions = []
+        self.delay = 3
 
     def load_instructions(self, path_to_instructions):
         print('Loading instructions located at {0}'.format(path_to_instructions))
@@ -22,16 +23,26 @@ class Control(object):
 
     def clean_brush(self):
         print('cleaning brush')
+        self.serial_connection.moveToSafe()
+        time.sleep(self.delay)
         self.serial_connection.moveApproachClean()
+        time.sleep(self.delay)
         self.serial_connection.moveOverClean()
+        time.sleep(self.delay)
         self.serial_connection.moveClean()
+        time.sleep(self.delay)
         self.apparatus.brush_cleaner(2)
         self.serial_connection.moveOverClean()
+        time.sleep(self.delay)
         self.serial_connection.moveOverDry()
+        time.sleep(self.delay)
         self.serial_connection.moveDry()
+        time.sleep(self.delay)
         self.apparatus.brush_dryer(2)
         self.serial_connection.moveOverDry()
+        time.sleep(self.delay)
         self.serial_connection.moveToSafe()
+        time.sleep(self.delay)
 
     def switch_or_create_color(self, ColorRGB):
         print('creating ColorRGB R:{r}, G:{g}, B:{b}'
@@ -58,7 +69,8 @@ class Control(object):
             self.single_step(step)
 if __name__ == '__main__':
     abb = ABBRunner(2530, 2530)
-    abb.connnectToSerial('/dev/ttyUSB0')
+    abb.connectToSerial('/dev/ttyUSB0')
+    abb.sendCanvasInfo()
     apparatus = PaintApparatus()
     ctrl = Control(abb, apparatus)
     ctrl.load_instructions('test.json')
