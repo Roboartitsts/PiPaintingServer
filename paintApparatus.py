@@ -98,7 +98,8 @@ class PaintApparatus:
 
     def dispense(self, color, volume):
         # dispense a volume of the paint
-        print("dispensing {0} of {1} color".format(volume, color))
+        volume = volume * self.steps_ml
+        print("dispensing {0} of color {1}".format(volume, color))
         if color == CMYK.Cyan:
             self.steppers[1].run(50, volume, Direction.forward)
         elif color == CMYK.Magenta:
