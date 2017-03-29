@@ -98,6 +98,7 @@ class PaintApparatus:
 
     def dispense(self, color, volume):
         # dispense a volume of the paint
+        print("dispensing {0} of {1} color".format(volume, color))
         if color == CMYK.Cyan:
             self.steppers[1].run(50, volume, Direction.forward)
         elif color == CMYK.Magenta:
@@ -126,7 +127,7 @@ class PaintApparatus:
         tot = sum(cmyk_colors)
         for index in range(len(cmyk_colors)):
             toAdd = cmyk_colors[index]*self.dispense_ml/tot
-            print(toAdd)
+            print('Mixing paint: {}'.format(target_color.getCMYK()))
             position = self.activeCup
             self.add(index + 1, position, toAdd)
             time.sleep(5)
