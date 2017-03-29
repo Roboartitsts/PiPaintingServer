@@ -33,7 +33,7 @@ class Control(object):
         self.serial_connection.moveOverDry()
         self.serial_connection.moveToSafe()
 
-    def switch_or_create_ColorRGB(self, ColorRGB):
+    def switch_or_create_color(self, ColorRGB):
         print('creating ColorRGB R:{r}, G:{g}, B:{b}'
               .format(r=ColorRGB.red, b=ColorRGB.blue, g=ColorRGB.green))
         self.apparatus.create_or_activate(ColorRGB)
@@ -48,7 +48,7 @@ class Control(object):
             self.switch_brush(step[9])
         if stroke_color != self.last_color:
             self.clean_brush()
-            self.switch_or_create_ColorRGB(stroke_color)
+            self.switch_or_create_color(stroke_color)
         self.serial_connection.sendCoordQ(step[0], step[1], step[2], step[3], step[4], step[5], step[6])
 
     def run(self):

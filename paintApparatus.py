@@ -156,6 +156,9 @@ class PaintApparatus:
     def mixer_at_clean(self):
         return GPIO.input(26)
         
+    def cleanMixer(self):
+        self.mixerStepper.run(15, 80, 1)
+
     def mix_color(self, target_color):
         '''
             move to each dispenser and dispense sequentially
@@ -187,11 +190,12 @@ class PaintApparatus:
 
     def create_or_activate(self, color):
         if color in self.palette_colors.keys():
-            self.paletteGoTo(self.palette_colors[color])
+            self.paletteGoTo(self.palette_colors[color] * self.stepsPerCup + self.position_offsets['c'])
             self.changeActiveCup(self.palette_colors[color])
             return
         self.changeActiveCup(max(self.palette_colors.values()) + 1)
         self.mix_color(color)
+        self.paletteGoTo(self.active_cup * self.stepsPerCup + self.position_offsets['c'])
 
 if __name__ == "__main__":
     print("Initiating Data collection on a color cube, generating 125 colors")
