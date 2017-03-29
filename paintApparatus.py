@@ -15,11 +15,11 @@ import colorExtractor
 5 : White
 """
 class CMYK(Enum):
-    Cyan = 0
-    Magenta = 1
-    Yellow = 2
-    Black = 3
-    White = 4
+    Cyan = 1
+    Magenta = 2
+    Yellow = 3
+    Black = 4
+    White = 5
 
 class PaintApparatus:
     dispense_ml = 8
@@ -128,7 +128,7 @@ class PaintApparatus:
             toAdd = cmyk_colors[index]*self.dispense_ml/tot
             print(toAdd)
             position = self.activeCup
-            self.add(index, position, toAdd)
+            self.add(index + 1, position, toAdd)
             time.sleep(5)
         self.palette_colors[target_color] = self.active_cup
         self.paletteGoTo(self.active_cup * self.stepsPerCup + self.position_offsets['c'])
