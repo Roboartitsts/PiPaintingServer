@@ -151,7 +151,7 @@ class PaintApparatus:
             self.paletteGoTo(self.palette_colors[color] * self.stepsPerCup + self.position_offsets['c'])
             self.changeActiveCup(self.palette_colors[color])
             return False
-        self.changeActiveCup(max(self.palette_colors.values()) + 1)
+        self.changeActiveCup(max(self.palette_colors.values() + [-1]) + 1)
         self.mix_color(color)
         self.paletteGoTo(self.active_cup * self.stepsPerCup + self.position_offsets['c'])
         return True
@@ -161,21 +161,12 @@ if __name__ == "__main__":
     # datafile = open('colorcube.csv')
     # csvwriter = csv.writer(datafile)
 
-    apparatus = PaintApparatus()
-    for pin in apparatus.pin_list:
+    paint_app = PaintApparatus()
+    for pin in paint_app.pin_list:
         GPIO.setup(pin, GPIO.OUT)
         GPIO.output(pin, GPIO.LOW)
-    # cyan = np.linspace(100, 0, 5)
-    # magenta = np.linspace(0, 100, 5)
-    # yellow = np.linspace(0, 100, 5)
-    # for c in cyan:
-    #     for m in magenta:
-    #         for y in yellow:
-    #             color = Color()
-    #             color.setCMYK([c, m, y, 0, 0])
-    #             color.cmyk2rgb()
-    #             aparatus.mix_color(color)
-    #             result = aparatus.getCameraColor()
-    #             dataToWrite = [c, m, y, 0, 0]
-    #             dataToWrite.extend(result)
-    #             csvwriter.writerow(dataToWrite)
+
+    test_color = Color()
+    test_color.setRGB([80, 0, 0])
+    test_color.rgb2cmyk()
+    paint_app.create_or_activate(test_color)
