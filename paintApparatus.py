@@ -120,45 +120,6 @@ class PaintApparatus:
         print(position)
         self.dispense(color, volume)
 
-    def mix(self):
-        self.moveMixerDown()
-        # lower the mixer into the cup
-        GPIO.output(11, GPIO.HIGH)
-        time.sleep(15)
-        GPIO.output(11, GPIO.LOW)
-        # mix for the given number of seconds
-        # raise the mixer out of the cup
-        self.moveMixerUp()
-
-
-    def moveMixerOverClean(self):
-        while not self.mixer_at_clean():
-            self.mixerStepper.run(15, 1, -1)
-
-    def moveMixerOverPaint(self):
-        while not self.mixer_at_paint(): 
-            self.mixerStepper.run(15, 1, 1)
-
-    def moveMixerDown(self):
-        GPIO.output(10, GPIO.HIGH)
-        time.sleep(13)
-        GPIO.output(10, GPIO.LOW)
-
-    def moveMixerUp(self):
-        GPIO.output(9, GPIO.HIGH)
-        time.sleep(13)
-        GPIO.output(9, GPIO.LOW)
- 
-    def mixer_at_paint(self):
-        ''' Switch for position is at 18'''
-        return GPIO.input(18)
-
-    def mixer_at_clean(self):
-        return GPIO.input(26)
-        
-    def cleanMixer(self):
-        self.mixerStepper.run(15, 80, 1)
-
     def mix_color(self, target_color):
         '''
             move to each dispenser and dispense sequentially
@@ -174,6 +135,7 @@ class PaintApparatus:
             self.add(index, position, toAdd)
             time.sleep(5)
         self.palette_colors[target_color] = self.active_cup
+        self.paletteGoTo(self.active_cup * self.stepsPerCup + self.position_offsets['c'])
 
     def changeActiveCup(self, num):
         self.activeCup = num
@@ -192,10 +154,11 @@ class PaintApparatus:
         if color in self.palette_colors.keys():
             self.paletteGoTo(self.palette_colors[color] * self.stepsPerCup + self.position_offsets['c'])
             self.changeActiveCup(self.palette_colors[color])
-            return
+            return False
         self.changeActiveCup(max(self.palette_colors.values()) + 1)
         self.mix_color(color)
         self.paletteGoTo(self.active_cup * self.stepsPerCup + self.position_offsets['c'])
+        return True
 
 if __name__ == "__main__":
     print("Initiating Data collection on a color cube, generating 125 colors")

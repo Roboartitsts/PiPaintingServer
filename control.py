@@ -36,7 +36,9 @@ class Control(object):
     def switch_or_create_color(self, ColorRGB):
         print('creating ColorRGB R:{r}, G:{g}, B:{b}'
               .format(r=ColorRGB.red, b=ColorRGB.blue, g=ColorRGB.green))
-        self.apparatus.create_or_activate(ColorRGB)
+        if self.apparatus.create_or_activate(ColorRGB):
+            self.serial_connection.mixPaint()
+            return
         self.serial_connection.getPaint(0)
 
     def single_step(self, step):
