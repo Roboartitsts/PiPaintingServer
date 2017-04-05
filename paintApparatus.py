@@ -92,6 +92,7 @@ class PaintApparatus:
         direc = Direction.forward
         if dist < 0:
             direc = Direction.backward
+            dist = abs(dist)
         self.steppers[0].run(5, dist, direc)
         self.palettePosition = position
 
@@ -170,12 +171,14 @@ class PaintApparatus:
         cmyk_colors = target_color.getCMYK()
         tot = sum(cmyk_colors)
         print('Mixing paint: {}'.format(target_color.getCMYK()))
-        for index in range(len(cmyk_colors)):
+        for index in range(0,3):
             toAdd = cmyk_colors[index]*self.dispense_ml/tot
             position = self.activeCup
             self.add(index + 1, position, toAdd)
             if not self.debug:
                 time.sleep(15)
+            else:
+                time.sleep(1)
         self.palette_colors[target_color] = self.activeCup
         self.paletteGoTo(self.activeCup * self.stepsPerCup + self.position_offsets['c'])
 
@@ -198,7 +201,6 @@ class PaintApparatus:
             self.changeActiveCup(self.palette_colors[color])
             return False
         self.changeActiveCup(max(self.palette_colors.values() + [-1]) + 1)
-        self.paletteGoTo(self.activeCup * self.stepsPerCup + self.position_offsets['c'])
         self.mix_color(color)
         self.paletteGoTo(self.activeCup * self.stepsPerCup + self.position_offsets['c'])
         return True
@@ -208,7 +210,7 @@ if __name__ == "__main__":
     # datafile = open('colorcube.csv')
     # csvwriter = csv.writer(datafile)
 
-    paint_app = PaintApparatus()
+    paint_app = PaintApparatus(True)
     for pin in paint_app.pin_list:
         GPIO.setup(pin, GPIO.OUT)
         GPIO.output(pin, GPIO.LOW)
@@ -218,10 +220,16 @@ if __name__ == "__main__":
     test_color.rgb2cmyk()
     paint_app.create_or_activate(test_color)
 
-    #test_color1 = Color()
-    #test_color1.setRGB([255, 255, 255])
-    #test_color1.rgb2cmyk()
-    #paint_app.create_or_activate(test_color1)
+    print('active cup {0}, palettePosition {1}'.format(paint_app.activeCup,
+paint_app.palettePosition))
+    time.sleep(10)
+
+    test_color1 = Color()
+    test_color1.setRGB([255, 255, 255])
+    test_color1.rgb2cmyk()
+    paint_app.create_or_activate(test_color1)
+    time.sleep(1)
+    paint_app.create_or_activate(test_color)
 
     #test_color2 = Color()
     #test_color2.setRGB([36, 69, 150])
