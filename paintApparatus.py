@@ -68,7 +68,7 @@ class PaintApparatus:
         self.stepsPerCup = 63
         self.maxPalettePosition = 19*self.stepsPerCup
         self.palette_colors = {}
-
+        self.debug = debug
         self.activeCup = 0
 
         # self.mixerStepper = StepperBasic(12,6,13,19)
@@ -174,7 +174,8 @@ class PaintApparatus:
             toAdd = cmyk_colors[index]*self.dispense_ml/tot
             position = self.activeCup
             self.add(index + 1, position, toAdd)
-            time.sleep(15)
+            if not self.debug:
+                time.sleep(15)
         self.palette_colors[target_color] = self.activeCup
         self.paletteGoTo(self.activeCup * self.stepsPerCup + self.position_offsets['c'])
 
