@@ -123,16 +123,16 @@ class PaintApparatus:
         backsteps = 0
         if volume > 40:
             backsteps = 40
-        
+
         if color == CMYK.Cyan:
-            self.steppers[1].run(speed, volume +40 , Direction.forward)
+            self.steppers[1].run(speed, volume + 40, Direction.forward)
             time.sleep(0.25)
             self.steppers[1].run(speed, 40, Direction.backward)
             time.sleep(1.5)
             self.steppers[1].run(speed, 10, Direction.forward)
             self.steppers[1].run(speed, 10, Direction.backward)
         elif color == CMYK.Magenta:
-            self.steppers[2].run(speed, volume +40 , Direction.forward)
+            self.steppers[2].run(speed, volume + 40, Direction.forward)
             time.sleep(0.25)
             self.steppers[2].run(speed, 40, Direction.backward)
             time.sleep(1.5)
@@ -140,20 +140,20 @@ class PaintApparatus:
             self.steppers[2].run(speed, 10, Direction.backward)
         elif color == CMYK.Yellow:
             volume = volume/2.0
-            self.steppers[3].run(25, volume +40 , Direction.forward)
+            self.steppers[3].run(25, volume + 40, Direction.forward)
             time.sleep(0.25)
             self.steppers[3].run(25, 40, Direction.backward)
         elif color == CMYK.Black:
             return
-            self.steppers[4].run(speed, volume +10 , Direction.forward)
+            self.steppers[4].run(speed, volume + 10, Direction.forward)
             time.sleep(0.25)
             self.steppers[4].run(speed, 40, Direction.backward)
         elif color == CMYK.White:
             return
-            self.steppers[5].run(15, volume +10 , Direction.forward)
+            self.steppers[5].run(15, volume + 10, Direction.forward)
             time.sleep(0.25)
             self.steppers[5].run(15, 40, Direction.backward)
-    
+
     def add(self, color, position, volume):
         # move pallate to color position
         position = position * self.stepsPerCup + self.position_offsets[color]
@@ -197,8 +197,8 @@ class PaintApparatus:
             self.paletteGoTo(self.palette_colors[color] * self.stepsPerCup + self.position_offsets['c'])
             self.changeActiveCup(self.palette_colors[color])
             return False
-        self.changeActiveCup(max(self.palette_colors.values() + [-1]) + 1)        
-        
+        self.changeActiveCup(max(self.palette_colors.values() + [-1]) + 1)
+        self.paletteGoTo(self.activeCup * self.stepsPerCup + self.position_offsets['c'])
         self.mix_color(color)
         self.paletteGoTo(self.activeCup * self.stepsPerCup + self.position_offsets['c'])
         return True
