@@ -68,7 +68,6 @@ class PaintApparatus:
         self.stepsPerCup = 63
         self.maxPalettePosition = 19*self.stepsPerCup
         self.palette_colors = {}
-        self.active_cup = 0
 
         self.activeCup = 0
 
@@ -137,8 +136,8 @@ class PaintApparatus:
             position = self.activeCup
             self.add(index + 1, position, toAdd)
             time.sleep(15)
-        self.palette_colors[target_color] = self.active_cup
-        self.paletteGoTo(self.active_cup * self.stepsPerCup + self.position_offsets['c'])
+        self.palette_colors[target_color] = self.activeCup
+        self.paletteGoTo(self.activeCup * self.stepsPerCup + self.position_offsets['c'])
 
     def changeActiveCup(self, num):
         self.activeCup = num
@@ -158,9 +157,10 @@ class PaintApparatus:
             self.paletteGoTo(self.palette_colors[color] * self.stepsPerCup + self.position_offsets['c'])
             self.changeActiveCup(self.palette_colors[color])
             return False
-        self.changeActiveCup(max(self.palette_colors.values() + [-1]) + 1)
+        self.changeActiveCup(max(self.palette_colors.values() + [-1]) + 1)        
+        
         self.mix_color(color)
-        self.paletteGoTo(self.active_cup * self.stepsPerCup + self.position_offsets['c'])
+        self.paletteGoTo(self.activeCup * self.stepsPerCup + self.position_offsets['c'])
         return True
 
 if __name__ == "__main__":
