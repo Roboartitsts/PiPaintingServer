@@ -76,7 +76,8 @@ class PaintApparatus:
 
         if debug:
             self.steppers = []
-            for i in range(0, 5):
+            self.steppers.append(Stepper(0))
+            for i in range(1, 5):
                 self.steppers.append(StepperTest(i))
 
         # set up position switches for the mixer arm
