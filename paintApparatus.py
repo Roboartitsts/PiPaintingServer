@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 from enum import Enum
-from stepper import Stepper, StepperBasic
+from stepper import Stepper, StepperBasic, StepperTest
 from stepper import Direction
 from color import Color
 import colorExtractor
@@ -55,7 +55,7 @@ class PaintApparatus:
         'c':-8 # Todo: see if it should be 300-8 or something else
     }
 
-    def __init__(self):
+    def __init__(self, debug=False):
         """
         0 : pallete
         1 : Cyan
@@ -72,16 +72,20 @@ class PaintApparatus:
 
         self.activeCup = 0
 
-        self.mixerStepper = StepperBasic(12,6,13,19)
-        
-        # set up position switches for the mixer arm 
-         
+        # self.mixerStepper = StepperBasic(12,6,13,19)
+
+        if debug:
+            self.steppers = []
+            for i in range(0, 5):
+                self.steppers.append(StepperTest(i))
+
+        # set up position switches for the mixer arm
         for pin in [18, 26]:
             GPIO.setup(pin, GPIO.IN)
             #print("testing pin {}".format(pin))
             val = GPIO.input(pin)
             #print(pin, val)
-    
+
     def paletteGoTo(self, position):
         ''' moves the palette to the specified position in steps '''
         dist = position - self.palettePosition

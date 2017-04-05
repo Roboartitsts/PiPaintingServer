@@ -158,4 +158,17 @@ class StepperBasic:
             print('going backward')
             backwards(self, int(delay) / 1000.0, int(steps))
 
+class StepperTest:
+    def __init__(self, control_val):
+        self.control_val = control_val
+
+    def run(self, delay, steps, direction):
+        """runs the Stepper
+
+        Keyword arguments:
+        delay -- the time between steps, min value is 50
+        steps -- the number of steps to travel
+        direction -- the direction for the stepper to travel
+        """
+        print('running stepper {0} for with {1} delay for {2} steps'.format(self.control_val, delay, steps))
 
