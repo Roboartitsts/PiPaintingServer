@@ -68,6 +68,13 @@ class ABBRunner():
 		msg = "MIXPAINT:" + str(cup) + ";"
 		return self.sendSerial(msg)
 
+	def rinse(self):
+		if not self.connected:
+			return False
+
+		msg = "RINSE;"
+		return self.sendSerial(msg)
+
 	def moveToSafe(self,):
 		if not self.connected:
 			return False
@@ -139,7 +146,7 @@ class ABBRunner():
 		self.height = height
 
 	def waitRobotReady(self):
-		for i in range(60):
+		for i in range(5):
 			code = self.readSerialLine()
 			print("waiting on robot...")
 			if code:
@@ -168,7 +175,7 @@ class ABBRunner():
 			return False
 
 		# TODO: Try/catch?
-		self.ser.write(msg.encode())
+		self.ser.write(msg)#.encode())
 		resp = self.ser.read(1)
 		# print("received command:",resp)
 		while resp == '':

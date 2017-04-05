@@ -48,11 +48,11 @@ class PaintApparatus:
 
     position_offsets = {
         1:0,
-        2:126,
-        3:126*2,
-        4:126*3,
-        5:126*4,
-        'c':-8 # Todo: see if it should be 300-8 or something else
+        2:126.66,
+        3:126.66*2,
+        4:126.66*3,
+        5:126.66*4,
+        'c':63.33*14 # Todo: see if it should be 300-8 or something else
     }
 
     def __init__(self):
@@ -88,7 +88,7 @@ class PaintApparatus:
         direc = Direction.forward
         if dist < 0:
             direc = Direction.backward
-        self.steppers[0].run(15, dist, direc)
+        self.steppers[0].run(5, dist, direc)
         self.palettePosition = position
 
     def getCameraColor(self):
@@ -96,7 +96,7 @@ class PaintApparatus:
         avg_color = colorExtractor.getMeanColor(img)
         return avg_color * 125629 / (640*480)
 
-    def dispense(self, color, volume):
+    def dispense_old(self, color, volume):
         # dispense a volume of the paint
         volume = volume * self.steps_ml
         print("dispensing {0} of color {1}".format(volume, color))
@@ -111,6 +111,45 @@ class PaintApparatus:
         elif color == CMYK.White:
             self.steppers[5].run(15, volume, Direction.forward)
 
+    def dispense(self, color, volume):
+        # dispense a volume of the paint
+        volume = volume * self.steps_ml
+        print("dispensing {0} of color {1}".format(volume, color))
+        speed = 5
+        backsteps = 0
+        if volume > 40:
+            backsteps = 40
+        
+        if color == CMYK.Cyan:
+            self.steppers[1].run(speed, volume +40 , Direction.forward)
+            time.sleep(0.25)
+            self.steppers[1].run(speed, 40, Direction.backward)
+            time.sleep(1.5)
+            self.steppers[1].run(speed, 10, Direction.forward)
+            self.steppers[1].run(speed, 10, Direction.backward)
+        elif color == CMYK.Magenta:
+            self.steppers[2].run(speed, volume +40 , Direction.forward)
+            time.sleep(0.25)
+            self.steppers[2].run(speed, 40, Direction.backward)
+            time.sleep(1.5)
+            self.steppers[2].run(speed, 10, Direction.forward)
+            self.steppers[2].run(speed, 10, Direction.backward)
+        elif color == CMYK.Yellow:
+            volume = volume/2.0
+            self.steppers[3].run(25, volume +40 , Direction.forward)
+            time.sleep(0.25)
+            self.steppers[3].run(25, 40, Direction.backward)
+        elif color == CMYK.Black:
+            return
+            self.steppers[4].run(speed, volume +10 , Direction.forward)
+            time.sleep(0.25)
+            self.steppers[4].run(speed, 40, Direction.backward)
+        elif color == CMYK.White:
+            return
+            self.steppers[5].run(15, volume +10 , Direction.forward)
+            time.sleep(0.25)
+            self.steppers[5].run(15, 40, Direction.backward)
+    
     def add(self, color, position, volume):
         # move pallate to color position
         position = position * self.stepsPerCup + self.position_offsets[color]
@@ -173,12 +212,12 @@ if __name__ == "__main__":
     test_color.rgb2cmyk()
     paint_app.create_or_activate(test_color)
 
-    test_color1 = Color()
-    test_color1.setRGB([255, 255, 255])
-    test_color1.rgb2cmyk()
-    paint_app.create_or_activate(test_color1)
+    #test_color1 = Color()
+    #test_color1.setRGB([255, 255, 255])
+    #test_color1.rgb2cmyk()
+    #paint_app.create_or_activate(test_color1)
 
-    test_color2 = Color()
-    test_color2.setRGB([36, 69, 150])
-    test_color2.rgb2cmyk()
-    paint_app.create_or_activate(test_color2)
+    #test_color2 = Color()
+    #test_color2.setRGB([36, 69, 150])
+    #test_color2.rgb2cmyk()
+    #paint_app.create_or_activate(test_color2)
