@@ -10,7 +10,7 @@ class Control(object):
         self.serial_connection = serial_connection
         self.apparatus = apparatus
         self.instructions = []
-        self.delay = 3
+        self.delay = 0.5
 
     def load_instructions(self, path_to_instructions):
         print('Loading instructions located at {0}'.format(path_to_instructions))
@@ -31,7 +31,8 @@ class Control(object):
         time.sleep(self.delay)
         self.serial_connection.moveClean()
         time.sleep(self.delay)
-        self.apparatus.brush_cleaner(2)
+        #self.apparatus.brush_cleaner(2)
+        self.serial_connection.rinse()
         self.serial_connection.moveOverClean()
         time.sleep(self.delay)
         self.serial_connection.moveOverDry()
@@ -39,32 +40,56 @@ class Control(object):
         self.serial_connection.moveDry()
         time.sleep(self.delay)
         self.apparatus.brush_dryer(2)
+        time.sleep(self.delay)
+        self.serial_connection.moveOverDry()
+        time.sleep(self.delay)
+        self.serial_connection.moveOverClean()
+        time.sleep(self.delay)
+        self.serial_connection.rinse()
+        time.sleep(self.delay)
+        self.serial_connection.moveOverDry()
+        time.sleep(self.delay)
+        self.serial_connection.moveDry()
+        time.sleep(self.delay)
+        self.apparatus.brush_dryer(2)
+        time.sleep(self.delay)
         self.serial_connection.moveOverDry()
         time.sleep(self.delay)
         self.serial_connection.moveToSafe()
         time.sleep(self.delay)
 
     def switch_or_create_color(self, ColorRGB):
+        ''' Returns False if the paint color was the same, True if new paint was mixed '''
         print('creating ColorRGB R:{r}, G:{g}, B:{b}'
               .format(r=ColorRGB.red, b=ColorRGB.blue, g=ColorRGB.green))
+        self.serial_connection.moveToSafe()
         if self.apparatus.create_or_activate(ColorRGB):
             self.serial_connection.mixPaint()
-            return
+            return True
         self.serial_connection.getPaint(0)
+        return False
 
     def single_step(self, step):
         print(step)
         stroke_color = Color()
         stroke_color.setRGB(step[6:9])
         stroke_color.rgb2cmyk()
-        if step[9] != self.last_brush:
-            self.switch_brush(step[9])
+#       if step[9] != self.last_brush:
+#            self.switch_brush(step[9])
+        toclean = False
         if stroke_color != self.last_color:
             self.clean_brush()
-            self.switch_or_create_color(stroke_color)
-        self.serial_connection.sendCoordQ(step[0], step[1], step[2], step[3], step[4], step[5], step[6])
+            toclean = self.switch_or_create_color(stroke_color)
+        else:
+            toclean = self.switch_or_create_color(stroke_color)
+            
+        self.serial_connection.moveToSafe()
+        self.serial_connection.sendCoordQ(step[0]*2530, step[1]*2530, step[2]*2530, step[3]*2530,
+step[4]*2530, step[5]*2530)
+        self.last_color = stroke_color
 
     def run(self):
+        self.serial_connection.moveToSafe()
         for step in self.instructions:
             self.single_step(step)
 if __name__ == '__main__':
@@ -73,6 +98,6 @@ if __name__ == '__main__':
     abb.sendCanvasInfo()
     apparatus = PaintApparatus()
     ctrl = Control(abb, apparatus)
-    ctrl.load_instructions('test.json')
+    ctrl.load_instructions('kmeans0999.json')
     ctrl.run()
 

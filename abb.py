@@ -33,8 +33,8 @@ class ABBRunner():
 		if not self.connected:
 			return False
 
-		msg = "COORDQ:X:" + str(x1) + ",Y:" + str(y1) + "#" + "X:" + str(x2) + ",Y:" + str(y2) + "#" + "X:" + str(x3) + ",Y:" + str(y3) + ";"
-
+		#msg = "COORDQ:X:" + str(x1) + ",Y:" + str(y1) + "#" + "X:" + str(x2) + ",Y:" + str(y2) + "#" + "X:" + str(x3) + ",Y:" + str(y3) + ";"
+		msg = "COORDQ:X:{:.3f},Y:{:.3f}#X:{:.3f},Y:{:.3f}#X:{:.3f},Y:{:.3f};".format(x1,y1,x2,y2,x3,y3)
 		return self.sendSerial(msg)
 
 	def followCurve(self):
@@ -139,14 +139,15 @@ class ABBRunner():
 		# self.ser.timeout = None
 
 		msg = "SIZE:X:" + str(self.width) + ",Y:" + str(self.height) + ";"
-		return self.sendSerial(msg)
+		self.sendSerial(msg)
+                return self.readSerial()
 
 	def setSize(self, width, height):
 		self.width = width
 		self.height = height
 
 	def waitRobotReady(self):
-		for i in range(5):
+		for i in range(100):
 			code = self.readSerialLine()
 			print("waiting on robot...")
 			if code:
@@ -159,7 +160,7 @@ class ABBRunner():
 		self.ser.close()
 
 	def connectToSerial(self, port):
-		self.ser = serial.Serial(port, 115200, timeout=1)
+		self.ser = serial.Serial(port, 115200, timeout=0.1)
 		self.connected = True
 
 	def readSerial(self,):
@@ -173,12 +174,22 @@ class ABBRunner():
 	def sendSerial(self, msg):
 		if self.connected == False:
 			return False
-
+                print(msg)
 		# TODO: Try/catch?
-		self.ser.write(msg)#.encode())
+		self.ser.write(msg.encode())
+                #print('waiting for response')
 		resp = self.ser.read(1)
 		# print("received command:",resp)
-		while resp == '':
+		#print('---respfast----')
+                #if resp != '':
+                #    print(resp,ord(resp))
+		#print('---respfast----')
+                while resp == '':
 			time.sleep(0.1)
 			resp = self.ser.read(1)
+                        #print('----resp----')
+                        #print(resp)
+                        #print('----resp----')
+                if ord(resp) == 2:
+                    return self.sendSerial(msg)
 		return True

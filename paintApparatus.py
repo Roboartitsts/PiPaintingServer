@@ -25,8 +25,8 @@ class PaintApparatus:
     dispense_ml = 8
     steps_ml = 28
     pin_list = {
-        23: {'name': 'GPIO 3', 'state': GPIO.LOW},
-        24: {'name': 'GPIO 4', 'state': GPIO.LOW},
+        23: {'name': 'GPIO 23', 'state': GPIO.LOW},
+        24: {'name': 'GPIO 24', 'state': GPIO.LOW},
         5: {'name': 'GPIO 5', 'state': GPIO.LOW},
         6: {'name': 'GPIO 6', 'state': GPIO.LOW},
         9: {'name': 'GPIO 9', 'state': GPIO.LOW},
@@ -85,6 +85,9 @@ class PaintApparatus:
             #print("testing pin {}".format(pin))
             val = GPIO.input(pin)
             #print(pin, val)
+        for out_pin in self.pin_list:
+            GPIO.setup(out_pin, GPIO.OUT)
+            GPIO.output(out_pin, GPIO.LOW)
 
     def paletteGoTo(self, position):
         ''' moves the palette to the specified position in steps '''
@@ -126,24 +129,18 @@ class PaintApparatus:
             backsteps = 40
 
         if color == CMYK.Cyan:
-            self.steppers[1].run(speed, volume + 40, Direction.forward)
+            self.steppers[1].run(speed, volume + 140, Direction.forward)
             time.sleep(0.25)
-            self.steppers[1].run(speed, 40, Direction.backward)
-            time.sleep(1.5)
-            self.steppers[1].run(speed, 10, Direction.forward)
-            self.steppers[1].run(speed, 10, Direction.backward)
+            self.steppers[1].run(speed, 140, Direction.backward)
         elif color == CMYK.Magenta:
-            self.steppers[2].run(speed, volume + 40, Direction.forward)
+            self.steppers[2].run(speed + 5, volume + 140, Direction.forward)
             time.sleep(0.25)
-            self.steppers[2].run(speed, 40, Direction.backward)
-            time.sleep(1.5)
-            self.steppers[2].run(speed, 10, Direction.forward)
-            self.steppers[2].run(speed, 10, Direction.backward)
+            self.steppers[2].run(speed + 5, 140, Direction.backward)
         elif color == CMYK.Yellow:
             volume = volume/2.0
-            self.steppers[3].run(25, volume + 40, Direction.forward)
+            self.steppers[3].run(25, volume + 140, Direction.forward)
             time.sleep(0.25)
-            self.steppers[3].run(25, 40, Direction.backward)
+            self.steppers[3].run(25, 140, Direction.backward)
         elif color == CMYK.Black:
             return
             self.steppers[4].run(speed, volume + 10, Direction.forward)
@@ -174,11 +171,20 @@ class PaintApparatus:
         for index in range(0,3):
             toAdd = cmyk_colors[index]*self.dispense_ml/tot
             position = self.activeCup
-            self.add(index + 1, position, toAdd)
+            if cmyk_colors[index] != 0:
+                self.add(index + 1, position, toAdd)
             if not self.debug:
                 time.sleep(15)
             else:
                 time.sleep(1)
+        if sum(cmyk_colors[0:3]) == 0:
+            # add black and white
+            to_add = cmyk_colors[3] * self.dispense_ml/tot
+            position = self.activeCup
+            self.add(4, position, to_add)
+            time.sleep(15)
+            to_add = cmyk_colors[4] * self.dispense_ml/tot
+            self.add(5, position, to_add)
         self.palette_colors[target_color] = self.activeCup
         self.paletteGoTo(self.activeCup * self.stepsPerCup + self.position_offsets['c'])
 
@@ -211,6 +217,9 @@ if __name__ == "__main__":
     # csvwriter = csv.writer(datafile)
 
     paint_app = PaintApparatus(True)
+    debug_mode = raw_input('Run in Debug mode? (Y/n)? ')
+    if 'n' in debug_mode:
+        paint_app = PaintApparatus()
     for pin in paint_app.pin_list:
         GPIO.setup(pin, GPIO.OUT)
         GPIO.output(pin, GPIO.LOW)
@@ -220,8 +229,7 @@ if __name__ == "__main__":
     test_color.rgb2cmyk()
     paint_app.create_or_activate(test_color)
 
-    print('active cup {0}, palettePosition {1}'.format(paint_app.activeCup,
-paint_app.palettePosition))
+    print('active cup {0}, palettePosition {1}'.format(paint_app.activeCup, paint_app.palettePosition))
     time.sleep(10)
 
     test_color1 = Color()
