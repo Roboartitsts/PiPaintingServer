@@ -3,6 +3,8 @@ import sys
 from enum import Enum
 import RPi.GPIO as GPIO
 
+# code influenced by https://learn.adafruit.com/adafruits-raspberry-pi-lesson-10-stepper-motors/software
+
 GPIO.setmode(GPIO.BCM)
 pin_list = {
     2: {'name': 'GPIO 2', 'state': GPIO.LOW},
