@@ -1,7 +1,8 @@
+import json
+from threading import Thread
+from color import Color
 from paintApparatus import *
 from abb import *
-import json
-from color import Color
 
 class Control(object):
     def __init__(self, serial_connection, apparatus):
@@ -76,32 +77,30 @@ class Control(object):
         stroke_color.rgb2cmyk()
 #       if step[9] != self.last_brush:
 #            self.switch_brush(step[9])
-        toclean = False
+        to_clean = False
         if stroke_color != self.last_color:
-            self.clean_brush()
-            toclean = self.switch_or_create_color(stroke_color)
+            clean_thread = Thread(target=self.clean_brush)
+            mix_thread = Thread(target=self.switch_or_create_color, args=([stroke_color]))
+            #mix_thread.start()
+            clean_thread.start()
+            clean_thread.join()
+            #mix_thread.join()
         else:
-            toclean = self.switch_or_create_color(stroke_color)
-            
+            to_clean = self.switch_or_create_color(stroke_color)
         self.serial_connection.moveToSafe()
-        self.serial_connection.sendCoordQ(step[0]*2530, step[1]*2530, step[2]*2530, step[3]*2530,
-step[4]*2530, step[5]*2530)
+        self.serial_connection.sendCoordQ(step[0]*2530, step[1]*2530, step[2]*2530, step[3]*2530, step[4]*2530, step[5]*2530)
         self.last_color = stroke_color
 
     def run(self):
         self.serial_connection.moveToSafe()
-        for step in range(len(self.instructions)):
-            self.single_step(self.instructions[step])
-            print("STROKE:",step)
-        self.serial_connection.moveToSafe()
-        self.clean_brush()
-
+        for step in self.instructions:
+            self.single_step(step)
 if __name__ == '__main__':
     abb = ABBRunner(2530, 2530)
     abb.connectToSerial('/dev/ttyUSB0')
     abb.sendCanvasInfo()
-    apparatus = PaintApparatus()
+    apparatus = PaintApparatus(True)
     ctrl = Control(abb, apparatus)
-    ctrl.load_instructions('kmeansflowers.json')
+    ctrl.load_instructions('kmeans0999.json')
     ctrl.run()
 

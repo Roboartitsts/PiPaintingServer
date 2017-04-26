@@ -23,7 +23,7 @@ class CMYK(Enum):
 
 class PaintApparatus:
     dispense_ml = 8
-    steps_ml = 28
+    steps_ml = 450
     pin_list = {
         23: {'name': 'GPIO 23', 'state': GPIO.LOW},
         24: {'name': 'GPIO 24', 'state': GPIO.LOW},
@@ -47,12 +47,12 @@ class PaintApparatus:
     }
 
     position_offsets = {
-        1:0,
+        1:126.66-6,    #0
         2:126.66,
-        3:126.66*2,
+        3:126.66+6,
         4:126.66*3,
         5:126.66*4,
-        'c':63.33*14 # Todo: see if it should be 300-8 or something else
+        'c':63.33*14 -15 # Todo: see if it should be 300-8 or something else
     }
 
     def __init__(self, debug=False):
@@ -65,7 +65,7 @@ class PaintApparatus:
         5 : White
         """
         self.palettePosition = 0
-        self.stepsPerCup = 63
+        self.stepsPerCup = 63.3333
         self.maxPalettePosition = 19*self.stepsPerCup
         self.palette_colors = {}
         self.debug = debug
@@ -123,24 +123,23 @@ class PaintApparatus:
         # dispense a volume of the paint
         volume = volume * self.steps_ml
         print("dispensing {0} of color {1}".format(volume, color))
-        speed = 5
+        speed = 8
         backsteps = 0
         if volume > 40:
             backsteps = 40
 
         if color == CMYK.Cyan:
-            self.steppers[1].run(speed, volume + 140, Direction.forward)
+            self.steppers[1].run(speed, volume + 50*2/3.0, Direction.forward)
             time.sleep(0.25)
-            self.steppers[1].run(speed, 140, Direction.backward)
+            self.steppers[1].run(speed, 50/3.0, Direction.backward)
         elif color == CMYK.Magenta:
-            self.steppers[2].run(speed + 5, volume + 140, Direction.forward)
+            self.steppers[2].run(speed, volume + 50*2/3.0, Direction.forward)
             time.sleep(0.25)
-            self.steppers[2].run(speed + 5, 140, Direction.backward)
+            self.steppers[2].run(speed, 50/3.0, Direction.backward)
         elif color == CMYK.Yellow:
-            volume = volume/2.0
-            self.steppers[3].run(25, volume + 140, Direction.forward)
+            self.steppers[3].run(speed, volume + 50*2/3.0, Direction.forward)
             time.sleep(0.25)
-            self.steppers[3].run(25, 140, Direction.backward)
+            self.steppers[3].run(speed, 50/3.0, Direction.backward)
         elif color == CMYK.Black:
             return
             self.steppers[4].run(speed, volume + 10, Direction.forward)
@@ -166,10 +165,12 @@ class PaintApparatus:
             move to camera to verify color
             target color is a ColorRGB object '''
         cmyk_colors = target_color.getCMYK()
-        tot = sum(cmyk_colors)
+        print("cmyk_colors:",cmyk_colors) 
+        tot = sum(cmyk_colors[0:3])
         print('Mixing paint: {}'.format(target_color.getCMYK()))
         for index in range(0,3):
             toAdd = cmyk_colors[index]*self.dispense_ml/tot
+            print("TOADD", toAdd)
             position = self.activeCup
             if cmyk_colors[index] != 0:
                 self.add(index + 1, position, toAdd)
@@ -200,6 +201,9 @@ class PaintApparatus:
         GPIO.output(23, GPIO.HIGH)
         time.sleep(seconds)
         GPIO.output(23, GPIO.LOW)
+
+    def moveCupPos(self, cup, pos):
+        self.paletteGoTo(cup * self.stepsPerCup + self.position_offsets[pos])
 
     def create_or_activate(self, color):
         if color in self.palette_colors.keys():

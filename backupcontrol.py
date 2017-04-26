@@ -90,18 +90,14 @@ step[4]*2530, step[5]*2530)
 
     def run(self):
         self.serial_connection.moveToSafe()
-        for step in range(len(self.instructions)):
-            self.single_step(self.instructions[step])
-            print("STROKE:",step)
-        self.serial_connection.moveToSafe()
-        self.clean_brush()
-
+        for step in self.instructions:
+            self.single_step(step)
 if __name__ == '__main__':
     abb = ABBRunner(2530, 2530)
     abb.connectToSerial('/dev/ttyUSB0')
     abb.sendCanvasInfo()
-    apparatus = PaintApparatus()
+    apparatus = PaintApparatus(True)
     ctrl = Control(abb, apparatus)
-    ctrl.load_instructions('kmeansflowers.json')
+    ctrl.load_instructions('kmeans0998.json')
     ctrl.run()
 

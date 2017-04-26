@@ -42,6 +42,11 @@ def setStep(stepper, w1, w2, w3, w4):
     GPIO.output(stepper.coil_B_1_pin, w3)
     GPIO.output(stepper.coil_B_2_pin, w4)
 
+def setStop(stepper):
+    GPIO.output(stepper.coil_A_1_pin, GPIO.LOW)
+    GPIO.output(stepper.coil_A_2_pin, GPIO.LOW)
+    GPIO.output(stepper.coil_B_1_pin, GPIO.LOW)
+    GPIO.output(stepper.coil_B_2_pin, GPIO.LOW)
 
 def forward(stepper, delay, steps):
     for i in range(0, steps):
@@ -53,6 +58,7 @@ def forward(stepper, delay, steps):
         time.sleep(delay)
         setStep(stepper, 1, 0, 0, 1)
         time.sleep(delay)
+    setStop(stepper)
 
 
 def backwards(stepper, delay, steps):
@@ -65,6 +71,7 @@ def backwards(stepper, delay, steps):
         time.sleep(delay)
         setStep(stepper, 1, 0, 1, 0)
         time.sleep(delay)
+    setStop(stepper)
 
 
 def set_control(control_val):

@@ -11,7 +11,7 @@ from io import BytesIO
 from stepper import Stepper
 from pin_control import PinControl
 
-UPLOAD_FOLDER = '/static/img/'
+UPLOAD_FOLDER = 'static/img/'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 app = Flask(__name__)
@@ -87,11 +87,15 @@ def upload_file():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.sae(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return redirect(request.url)
     url = "http://overmind.rose-hulman.edu:1700/generator"
     response = server_status()
     return render_template('home.html', status=response, genlist=classes)
+
+@app.route('/run_script',methods=['GET', 'POST'])
+def run_script():
+    return render_template('run_script.html')
 
 @app.route('/generate', methods=['POST'])
 def get_generated_image():
