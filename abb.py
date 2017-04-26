@@ -140,7 +140,7 @@ class ABBRunner():
 
 		msg = "SIZE:X:" + str(self.width) + ",Y:" + str(self.height) + ";"
 		self.sendSerial(msg)
-                return self.readSerial()
+		return self.readSerial()
 
 	def setSize(self, width, height):
 		self.width = width
@@ -174,7 +174,7 @@ class ABBRunner():
 	def sendSerial(self, msg):
 		if self.connected == False:
 			return False
-                print(msg)
+		print(msg)
 		# TODO: Try/catch?
 		self.ser.write(msg.encode())
                 #print('waiting for response')
@@ -184,12 +184,9 @@ class ABBRunner():
                 #if resp != '':
                 #    print(resp,ord(resp))
 		#print('---respfast----')
-                while resp == '':
+		while resp == '':
 			time.sleep(0.1)
 			resp = self.ser.read(1)
-                        #print('----resp----')
-                        #print(resp)
-                        #print('----resp----')
-                if ord(resp) == 2:
-                    return self.sendSerial(msg)
+			if ord(resp) == 2:
+    				return self.sendSerial(msg)
 		return True

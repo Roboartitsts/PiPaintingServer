@@ -10,12 +10,17 @@ from PIL import Image
 from io import BytesIO
 from stepper import Stepper
 from pin_control import PinControl
+from control import *
+from abb import *
+from paintApparatus import *
 
 UPLOAD_FOLDER = 'static/img/'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+CONTROL_SCRIPT = 'static/json/control.json'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'json'}
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['CONTROL_SCRIPT'] = CONTROL_SCRIPT
 pin_control = PinControl()
 
 
@@ -95,7 +100,27 @@ def upload_file():
 
 @app.route('/run_script',methods=['GET', 'POST'])
 def run_script():
-    return render_template('run_script.html')
+    if request.method == 'GET':
+        return render_template('run_script.html')
+    else:
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(app.config['CONTROL_SCRIPT'])
+            serial_arm = ABBRunner(2530, 2530)
+            serial_arm.connectToSerial('/dev/ttyUSB0')
+            serial_arm.sendCanvasInfo()
+            mixer = PaintApparatus()
+            control = Control(serial_arm, mixer)
+            control.load_instructions(app.config['CONTROL_SCRIPT'])
+            control.run()
+            return redirect(request.url)
 
 @app.route('/generate', methods=['POST'])
 def get_generated_image():
