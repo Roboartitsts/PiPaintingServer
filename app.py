@@ -104,13 +104,14 @@ def run_script():
     if request.method == 'GET':
         return render_template('run_script.html')
     else:
+        response = server_status()
         if 'file' not in request.files:
             print('No file part')
-            return redirect(request.url)
+            return render_template('home.html', status=response, genlist = classes)
         file = request.files['file']
         if file.filename == '':
             print('No selected file')
-            return redirect(request.url)
+            return render_template('home.html', status=response, genlist = classes)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(app.config['CONTROL_SCRIPT'])
@@ -121,7 +122,7 @@ def run_script():
             control = Control(serial_arm, mixer)
             control.load_instructions(app.config['CONTROL_SCRIPT'])
             control.run()
-            return redirect(request.url)
+            return render_template('home.html', status=response, genlist = classes)
 
 @app.route('/generate', methods=['POST'])
 def get_generated_image():
