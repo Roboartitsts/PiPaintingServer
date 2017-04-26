@@ -21,6 +21,7 @@ class Color:
         self.black = cmyk[3]
         self.white = cmyk[4]
 
+    # rgb <-> cmyk conversion algorithms based of calculations found: http://www.rapidtables.com/convert/color/rgb-to-cmyk.htm
     def rgb2cmyk(self):
         rp = self.red/255.0
         gp = self.green/255.0
