@@ -12,6 +12,7 @@ from stepper import Stepper
 from pin_control import PinControl
 from control import *
 from abb import *
+from test_abb import TestABBRunner
 from paintApparatus import *
 
 UPLOAD_FOLDER = 'static/img/'
@@ -113,7 +114,7 @@ def run_script():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(app.config['CONTROL_SCRIPT'])
-            serial_arm = ABBRunner(2530, 2530)
+            serial_arm = TestABBRunner(2530, 2530)
             serial_arm.connectToSerial('/dev/ttyUSB0')
             serial_arm.sendCanvasInfo()
             mixer = PaintApparatus()
